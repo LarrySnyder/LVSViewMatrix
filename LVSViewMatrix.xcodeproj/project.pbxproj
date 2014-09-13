@@ -1,0 +1,472 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		460D971F19C3CB0C00155416 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D971E19C3CB0C00155416 /* Foundation.framework */; };
+		460D972119C3CB0C00155416 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D972019C3CB0C00155416 /* CoreGraphics.framework */; };
+		460D972319C3CB0C00155416 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D972219C3CB0C00155416 /* UIKit.framework */; };
+		460D972919C3CB0C00155416 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 460D972719C3CB0C00155416 /* InfoPlist.strings */; };
+		460D972B19C3CB0C00155416 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 460D972A19C3CB0C00155416 /* main.m */; };
+		460D972F19C3CB0C00155416 /* LVSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 460D972E19C3CB0C00155416 /* LVSAppDelegate.m */; };
+		460D973219C3CB0C00155416 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 460D973019C3CB0C00155416 /* Main.storyboard */; };
+		460D973519C3CB0C00155416 /* LVSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 460D973419C3CB0C00155416 /* LVSViewController.m */; };
+		460D973719C3CB0C00155416 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 460D973619C3CB0C00155416 /* Images.xcassets */; };
+		460D973E19C3CB0C00155416 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D973D19C3CB0C00155416 /* XCTest.framework */; };
+		460D973F19C3CB0C00155416 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D971E19C3CB0C00155416 /* Foundation.framework */; };
+		460D974019C3CB0C00155416 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D972219C3CB0C00155416 /* UIKit.framework */; };
+		460D974819C3CB0C00155416 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 460D974619C3CB0C00155416 /* InfoPlist.strings */; };
+		460D974A19C3CB0C00155416 /* LVSViewMatrixTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 460D974919C3CB0C00155416 /* LVSViewMatrixTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		460D974119C3CB0C00155416 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 460D971319C3CB0C00155416 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 460D971A19C3CB0C00155416;
+			remoteInfo = LVSViewMatrix;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		460D971B19C3CB0C00155416 /* LVSViewMatrix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LVSViewMatrix.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		460D971E19C3CB0C00155416 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		460D972019C3CB0C00155416 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		460D972219C3CB0C00155416 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		460D972619C3CB0C00155416 /* LVSViewMatrix-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LVSViewMatrix-Info.plist"; sourceTree = "<group>"; };
+		460D972819C3CB0C00155416 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		460D972A19C3CB0C00155416 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		460D972C19C3CB0C00155416 /* LVSViewMatrix-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LVSViewMatrix-Prefix.pch"; sourceTree = "<group>"; };
+		460D972D19C3CB0C00155416 /* LVSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LVSAppDelegate.h; sourceTree = "<group>"; };
+		460D972E19C3CB0C00155416 /* LVSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LVSAppDelegate.m; sourceTree = "<group>"; };
+		460D973119C3CB0C00155416 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		460D973319C3CB0C00155416 /* LVSViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LVSViewController.h; sourceTree = "<group>"; };
+		460D973419C3CB0C00155416 /* LVSViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LVSViewController.m; sourceTree = "<group>"; };
+		460D973619C3CB0C00155416 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		460D973C19C3CB0C00155416 /* LVSViewMatrixTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LVSViewMatrixTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		460D973D19C3CB0C00155416 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		460D974519C3CB0C00155416 /* LVSViewMatrixTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LVSViewMatrixTests-Info.plist"; sourceTree = "<group>"; };
+		460D974719C3CB0C00155416 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		460D974919C3CB0C00155416 /* LVSViewMatrixTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LVSViewMatrixTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		460D971819C3CB0C00155416 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460D972119C3CB0C00155416 /* CoreGraphics.framework in Frameworks */,
+				460D972319C3CB0C00155416 /* UIKit.framework in Frameworks */,
+				460D971F19C3CB0C00155416 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		460D973919C3CB0C00155416 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460D973E19C3CB0C00155416 /* XCTest.framework in Frameworks */,
+				460D974019C3CB0C00155416 /* UIKit.framework in Frameworks */,
+				460D973F19C3CB0C00155416 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		460D971219C3CB0C00155416 = {
+			isa = PBXGroup;
+			children = (
+				460D972419C3CB0C00155416 /* LVSViewMatrix */,
+				460D974319C3CB0C00155416 /* LVSViewMatrixTests */,
+				460D971D19C3CB0C00155416 /* Frameworks */,
+				460D971C19C3CB0C00155416 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		460D971C19C3CB0C00155416 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				460D971B19C3CB0C00155416 /* LVSViewMatrix.app */,
+				460D973C19C3CB0C00155416 /* LVSViewMatrixTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		460D971D19C3CB0C00155416 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				460D971E19C3CB0C00155416 /* Foundation.framework */,
+				460D972019C3CB0C00155416 /* CoreGraphics.framework */,
+				460D972219C3CB0C00155416 /* UIKit.framework */,
+				460D973D19C3CB0C00155416 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		460D972419C3CB0C00155416 /* LVSViewMatrix */ = {
+			isa = PBXGroup;
+			children = (
+				460D972D19C3CB0C00155416 /* LVSAppDelegate.h */,
+				460D972E19C3CB0C00155416 /* LVSAppDelegate.m */,
+				460D973019C3CB0C00155416 /* Main.storyboard */,
+				460D973319C3CB0C00155416 /* LVSViewController.h */,
+				460D973419C3CB0C00155416 /* LVSViewController.m */,
+				460D973619C3CB0C00155416 /* Images.xcassets */,
+				460D972519C3CB0C00155416 /* Supporting Files */,
+			);
+			path = LVSViewMatrix;
+			sourceTree = "<group>";
+		};
+		460D972519C3CB0C00155416 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				460D972619C3CB0C00155416 /* LVSViewMatrix-Info.plist */,
+				460D972719C3CB0C00155416 /* InfoPlist.strings */,
+				460D972A19C3CB0C00155416 /* main.m */,
+				460D972C19C3CB0C00155416 /* LVSViewMatrix-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		460D974319C3CB0C00155416 /* LVSViewMatrixTests */ = {
+			isa = PBXGroup;
+			children = (
+				460D974919C3CB0C00155416 /* LVSViewMatrixTests.m */,
+				460D974419C3CB0C00155416 /* Supporting Files */,
+			);
+			path = LVSViewMatrixTests;
+			sourceTree = "<group>";
+		};
+		460D974419C3CB0C00155416 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				460D974519C3CB0C00155416 /* LVSViewMatrixTests-Info.plist */,
+				460D974619C3CB0C00155416 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		460D971A19C3CB0C00155416 /* LVSViewMatrix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 460D974D19C3CB0C00155416 /* Build configuration list for PBXNativeTarget "LVSViewMatrix" */;
+			buildPhases = (
+				460D971719C3CB0C00155416 /* Sources */,
+				460D971819C3CB0C00155416 /* Frameworks */,
+				460D971919C3CB0C00155416 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LVSViewMatrix;
+			productName = LVSViewMatrix;
+			productReference = 460D971B19C3CB0C00155416 /* LVSViewMatrix.app */;
+			productType = "com.apple.product-type.application";
+		};
+		460D973B19C3CB0C00155416 /* LVSViewMatrixTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 460D975019C3CB0C00155416 /* Build configuration list for PBXNativeTarget "LVSViewMatrixTests" */;
+			buildPhases = (
+				460D973819C3CB0C00155416 /* Sources */,
+				460D973919C3CB0C00155416 /* Frameworks */,
+				460D973A19C3CB0C00155416 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				460D974219C3CB0C00155416 /* PBXTargetDependency */,
+			);
+			name = LVSViewMatrixTests;
+			productName = LVSViewMatrixTests;
+			productReference = 460D973C19C3CB0C00155416 /* LVSViewMatrixTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		460D971319C3CB0C00155416 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = LVS;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Larry Snyder";
+				TargetAttributes = {
+					460D973B19C3CB0C00155416 = {
+						TestTargetID = 460D971A19C3CB0C00155416;
+					};
+				};
+			};
+			buildConfigurationList = 460D971619C3CB0C00155416 /* Build configuration list for PBXProject "LVSViewMatrix" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 460D971219C3CB0C00155416;
+			productRefGroup = 460D971C19C3CB0C00155416 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				460D971A19C3CB0C00155416 /* LVSViewMatrix */,
+				460D973B19C3CB0C00155416 /* LVSViewMatrixTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		460D971919C3CB0C00155416 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460D973719C3CB0C00155416 /* Images.xcassets in Resources */,
+				460D972919C3CB0C00155416 /* InfoPlist.strings in Resources */,
+				460D973219C3CB0C00155416 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		460D973A19C3CB0C00155416 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460D974819C3CB0C00155416 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		460D971719C3CB0C00155416 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460D972F19C3CB0C00155416 /* LVSAppDelegate.m in Sources */,
+				460D973519C3CB0C00155416 /* LVSViewController.m in Sources */,
+				460D972B19C3CB0C00155416 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		460D973819C3CB0C00155416 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460D974A19C3CB0C00155416 /* LVSViewMatrixTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		460D974219C3CB0C00155416 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 460D971A19C3CB0C00155416 /* LVSViewMatrix */;
+			targetProxy = 460D974119C3CB0C00155416 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		460D972719C3CB0C00155416 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				460D972819C3CB0C00155416 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		460D973019C3CB0C00155416 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				460D973119C3CB0C00155416 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		460D974619C3CB0C00155416 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				460D974719C3CB0C00155416 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		460D974B19C3CB0C00155416 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		460D974C19C3CB0C00155416 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		460D974E19C3CB0C00155416 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LVSViewMatrix/LVSViewMatrix-Prefix.pch";
+				INFOPLIST_FILE = "LVSViewMatrix/LVSViewMatrix-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		460D974F19C3CB0C00155416 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LVSViewMatrix/LVSViewMatrix-Prefix.pch";
+				INFOPLIST_FILE = "LVSViewMatrix/LVSViewMatrix-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		460D975119C3CB0C00155416 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/LVSViewMatrix.app/LVSViewMatrix";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LVSViewMatrix/LVSViewMatrix-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "LVSViewMatrixTests/LVSViewMatrixTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		460D975219C3CB0C00155416 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/LVSViewMatrix.app/LVSViewMatrix";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LVSViewMatrix/LVSViewMatrix-Prefix.pch";
+				INFOPLIST_FILE = "LVSViewMatrixTests/LVSViewMatrixTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		460D971619C3CB0C00155416 /* Build configuration list for PBXProject "LVSViewMatrix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				460D974B19C3CB0C00155416 /* Debug */,
+				460D974C19C3CB0C00155416 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		460D974D19C3CB0C00155416 /* Build configuration list for PBXNativeTarget "LVSViewMatrix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				460D974E19C3CB0C00155416 /* Debug */,
+				460D974F19C3CB0C00155416 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		460D975019C3CB0C00155416 /* Build configuration list for PBXNativeTarget "LVSViewMatrixTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				460D975119C3CB0C00155416 /* Debug */,
+				460D975219C3CB0C00155416 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 460D971319C3CB0C00155416 /* Project object */;
+}
