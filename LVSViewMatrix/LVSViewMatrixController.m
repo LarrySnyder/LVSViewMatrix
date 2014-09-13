@@ -13,6 +13,33 @@
 #define kInsertColAnimationDuration 1.0
 #endif
 
+#pragma mark --- LVSViewMatrixRow ---
+
+@implementation LVSViewMatrixRow
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.height = -1;
+        self.alignment = LVSRowAlignmentMiddle;
+        self.cells = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+
+- (NSInteger)numCells
+{
+    return [self.cells count];
+}
+
+@end
+
+
+
+
+#pragma mark --- LVSViewMatrixController ---
+
 @interface LVSViewMatrixController ()
 
 @end
@@ -20,10 +47,17 @@
 @implementation LVSViewMatrixController
 {
     // Cells in the matrix, stored as an array of arrays. Outer array corresponds to rows, inner to columns.
-    // Can access using _cells[r][c]
+    // Can access using _cells[r][c]. All objects are of type UIView*
     NSMutableArray *_cells;
     
-    // Row heights and column widths
+    // Rows and columns in the matrix. _rows[r].cells[c] = _cols[c].rows[r] = _cells[r][c].
+    // All objects are of type LVSViewMatrixRow* or LVSViewMatrixCol*
+    NSMutableArray *_rows;
+    NSMutableArray *_cols;
+    
+    // Row heights and column widths. These are the actual computed heights and widths. If
+    // _rows[r].height or _cols[c].width are >= 0, that height and/or width are used; otherwise
+    // height and/or width are calculated automatically (and stored here)
     NSMutableArray *_rowHeights;
     NSMutableArray *_colWidths;
 }
@@ -48,24 +82,7 @@
         self.rowMargin = 0.0;
         self.colMargin = 0.0;
         
-        // Set size (in general use insertRows: and insertColumns: to change the size,
-        // but this is safe here because we know the matrix is empty)
-    //    self.numberOfRows = numRows;
-      //  self.numberOfCols = numCols;
-        
-        // Insert empty rows and columns
-        for (int i = 0; i < numRows; i++)
-            [self insertRow:[[NSMutableArray alloc] initWithCapacity:numCols]
-                      atRow:0
-                 withHeight:0
-                   animated:NO];
-        for (int j = 0; j < numCols; j++)
-            [self insertCol:[[NSMutableArray alloc] initWithCapacity:numRows]
-                      atCol:0
-                  withWidth:0
-                   animated:NO];
-        
-        // Initialize _cells
+        // Initialize _cells, _rows, _cols
         _cells = [[NSMutableArray alloc] initWithCapacity:numRows];
         for (int i = 0; i < numRows; i++)
         {
@@ -73,10 +90,29 @@
             for (int j = 0; j < numCols; j++)
                 _cells[i][j] = [NSNull null];
         }
+        _rows = [[NSMutableArray alloc] initWithCapacity:numRows];
+        _cols = [[NSMutableArray alloc] initWithCapacity:numCols];
         
         // Initialize row heights and column widths
         _rowHeights = [[NSMutableArray alloc] initWithCapacity:numRows];
         _colWidths = [[NSMutableArray alloc] initWithCapacity:numCols];
+
+        // Insert empty rows and columns
+        for (int i = 0; i < numRows; i++)
+        {
+            LVSViewMatrixRow *row = [[LVSViewMatrixRow alloc] init];
+            [self insertRow:row atRow:0 animated:NO];
+            
+        }
+        for (int j = 0; j < numCols; j++)
+        {
+        
+        }
+/*            [self insertCol:[[NSMutableArray alloc] initWithCapacity:numRows]
+                      atCol:0
+                  withWidth:0
+                   animated:NO];*/
+        
     }
     return self;
 }
@@ -89,17 +125,14 @@
 
 #pragma mark Property Sets/Gets
 
-- (NSInteger)getNumberOfRows
+- (NSInteger)numberOfRows
 {
-    return [_cells count];
+    return [_rows count];
 }
 
-- (NSInteger)getNumberOfCols
+- (NSInteger)numberOfCols
 {
-    if ([_cells count] == 0)
-        return 0;
-    else
-        return [((NSMutableArray *)_cells[0]) count];
+    return [_cols count];
 }
 
 #pragma mark View Stuff
@@ -118,8 +151,7 @@
 
 #pragma mark Size
 
-- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum withHeight:(CGFloat)height animated:(BOOL)animated
-// NEED TO HANDLE withHeight:
+- (void)insertRow:(LVSViewMatrixRow *)row atRow:(NSInteger)rowNum animated:(BOOL)animated
 {
     if (rowNum > self.numberOfRows)
     {
@@ -131,16 +163,17 @@
     else
     {
         // Add null entries at end of row, if necessary
-        for (int j = [row count]; j < self.numberOfCols; j++)
-            row[j] = [NSNull null];
+        for (int j = row.numCells; j < self.numberOfCols; j++)
+            row.cells[j] = [NSNull null];
         
         // Insert new row into matrix
-        [_cells insertObject:row atIndex:rowNum];
+        [_rows insertObject:row atIndex:rowNum];
+        [_cells insertObject:row atIndex:rowNum];   // TODO fix tgis
         
         // Add cells from new row as subviews
-        for (int j = 0; j < [row count]; j++)
-            if (row[j] != [NSNull null])
-                [self.view addSubview:(UIView *)row[j]];
+        for (int j = 0; j < row.numCells; j++)
+            if (row.cells[j] != [NSNull null])
+                [self.view addSubview:(UIView *)row.cells[j]];
         
         // Set animation duration
         CGFloat duration;
@@ -189,7 +222,7 @@
     _cells[row][col] = view;
 }
 
-- (UIView *)getViewForRow:(NSInteger)row forCol:(NSInteger)col
+- (UIView *)viewInRow:(NSInteger)row forCol:(NSInteger)col
 {
     return _cells[row][col];
 }

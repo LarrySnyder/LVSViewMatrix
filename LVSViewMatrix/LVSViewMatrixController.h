@@ -8,6 +8,52 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    LVSRowAlignmentTop,
+    LVSRowAlignmentMiddle,
+    LVSRowAlignmentBottom
+} LVSRowAlignment;
+
+typedef enum : NSUInteger {
+    LVSColAlignmentLeft,
+    LVSColAlignmentCenter,
+    LVSColAlignmentRight
+} LVSColAlignment;
+
+
+#pragma mark --- LVSViewMatrixRow ---
+
+@interface LVSViewMatrixRow : NSObject
+
+/*
+ NSMutableArray of cells in row. Allocated by init.
+ */
+@property (nonatomic, strong) NSMutableArray *cells;
+
+/*
+ Number of cells in row. Read only.
+ */
+@property (nonatomic, readonly) NSInteger numCells;
+
+/*
+ Row height. Set to anything <0 to set height automatically.
+ Defaults to -1.
+ */
+@property (nonatomic, assign) CGFloat height;
+
+/*
+ Vertical alignment. Choose from {LVSRowAlignmentTop,
+ LVSRowAlignmentMiddle, LVSRowAlignmentBottom}. Defaults to
+ LVSRowAlignmentMiddle. */
+@property (nonatomic, assign) LVSRowAlignment alignment;
+
+@end
+
+
+
+
+#pragma mark --- LVSViewMatrixController ---
+
 @interface LVSViewMatrixController : UIViewController
 
 #pragma mark Initializers
@@ -22,9 +68,8 @@
 /*
  Number of rows and columns in matrix. Read only.
  */
-// (Not sure why I need to declare getter name explicitly, but I seem to...)
-@property (nonatomic, readonly, getter = getNumberOfRows) NSInteger numberOfRows;
-@property (nonatomic, readonly, getter = getNumberOfCols) NSInteger numberOfCols;
+@property (nonatomic, readonly) NSInteger numberOfRows;
+@property (nonatomic, readonly) NSInteger numberOfCols;
 
 /*
  Inserting rows and columns. 
@@ -40,8 +85,9 @@
  
  Similar comments for insertCols:atCol:withWidth:
  */
-- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum withHeight:(CGFloat)height animated:(BOOL)animated;
-- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum withWidth:(CGFloat)width animated:(BOOL)animated;
+- (void)insertRow:(LVSViewMatrixRow *)row atRow:(NSInteger)rowNum animated:(BOOL)animated;
+//- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum withHeight:(CGFloat)height animated:(BOOL)animated;
+//- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum withWidth:(CGFloat)width animated:(BOOL)animated;
 
 #pragma mark Getting and Settings Cells
 
@@ -53,7 +99,7 @@
 /*
  Returns the view in a given cell.
  */
-- (UIView *)getViewForRow:(NSInteger)row forCol:(NSInteger)col;
+- (UIView *)viewInRow:(NSInteger)row forCol:(NSInteger)col;
 
 #pragma mark Layout
 

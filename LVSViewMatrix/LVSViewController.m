@@ -68,7 +68,7 @@
 - (IBAction)handleAddRow:(id)sender
 {
     // Create new row
-    NSMutableArray *newRow = [[NSMutableArray alloc] initWithCapacity:vmc.numberOfCols];
+    LVSViewMatrixRow *newRow = [[LVSViewMatrixRow alloc] init];
     for (int j = 0; j < vmc.numberOfCols; j++)
     {
         // Create cell of random size and color
@@ -76,14 +76,11 @@
         cell.backgroundColor = [UIColor colorWithRed:(CGFloat)rand()/RAND_MAX green:(CGFloat)rand()/RAND_MAX blue:(CGFloat)rand()/RAND_MAX alpha:1.0];
         
         // Insert into row
-        [newRow addObject:cell];
+        [newRow.cells addObject:cell];
     }
     
     // Insert row into matrix
-    [vmc insertRow:newRow
-             atRow:[self.addRowNum.text intValue]
-        withHeight:-1
-          animated:YES];
+    [vmc insertRow:newRow atRow:[self.addRowNum.text intValue] animated:YES];
 }
 
 - (IBAction)handleAddCol:(id)sender
