@@ -10,4 +10,12 @@
 
 @interface LVSViewController : UIViewController
 
+@property (nonatomic, weak) IBOutlet UIView *matrixView;
+@property (nonatomic, weak) IBOutlet UITextField *addRowNum;
+@property (nonatomic, weak) IBOutlet UITextField *addColNum;
+
+- (IBAction)handleLayoutCells:(id)sender;
+- (IBAction)handleAddRow:(id)sender;
+- (IBAction)handleAddCol:(id)sender;
+
 @end
