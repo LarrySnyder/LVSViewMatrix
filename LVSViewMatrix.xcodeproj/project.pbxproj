@@ -21,6 +21,7 @@
 		460D974019C3CB0C00155416 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460D972219C3CB0C00155416 /* UIKit.framework */; };
 		460D974819C3CB0C00155416 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 460D974619C3CB0C00155416 /* InfoPlist.strings */; };
 		460D974A19C3CB0C00155416 /* LVSViewMatrixTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 460D974919C3CB0C00155416 /* LVSViewMatrixTests.m */; };
+		460D975519C3CBA600155416 /* LVSViewMatrixController.m in Sources */ = {isa = PBXBuildFile; fileRef = 460D975419C3CBA600155416 /* LVSViewMatrixController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,8 @@
 		460D974519C3CB0C00155416 /* LVSViewMatrixTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LVSViewMatrixTests-Info.plist"; sourceTree = "<group>"; };
 		460D974719C3CB0C00155416 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		460D974919C3CB0C00155416 /* LVSViewMatrixTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LVSViewMatrixTests.m; sourceTree = "<group>"; };
+		460D975319C3CBA600155416 /* LVSViewMatrixController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LVSViewMatrixController.h; sourceTree = "<group>"; };
+		460D975419C3CBA600155416 /* LVSViewMatrixController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LVSViewMatrixController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +122,8 @@
 				460D973419C3CB0C00155416 /* LVSViewController.m */,
 				460D973619C3CB0C00155416 /* Images.xcassets */,
 				460D972519C3CB0C00155416 /* Supporting Files */,
+				460D975319C3CBA600155416 /* LVSViewMatrixController.h */,
+				460D975419C3CBA600155416 /* LVSViewMatrixController.m */,
 			);
 			path = LVSViewMatrix;
 			sourceTree = "<group>";
@@ -251,6 +256,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				460D972F19C3CB0C00155416 /* LVSAppDelegate.m in Sources */,
+				460D975519C3CBA600155416 /* LVSViewMatrixController.m in Sources */,
 				460D973519C3CB0C00155416 /* LVSViewController.m in Sources */,
 				460D972B19C3CB0C00155416 /* main.m in Sources */,
 			);
