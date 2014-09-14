@@ -63,13 +63,33 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="xVl-TU-X13">
+                                <rect key="frame" x="179" y="49" width="123" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="Top"/>
+                                    <segment title="Mid"/>
+                                    <segment title="Bot"/>
+                                </segments>
+                            </segmentedControl>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="dKz-Lk-O6W">
+                                <rect key="frame" x="179" y="78" width="123" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="Left"/>
+                                    <segment title="Ctr"/>
+                                    <segment title="Right"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="addColNum" destination="au3-6C-IDj" id="M2R-fa-YtP"/>
                         <outlet property="addRowNum" destination="Wcb-tR-8L9" id="dMI-bB-kBL"/>
+                        <outlet property="colAlignment" destination="dKz-Lk-O6W" id="4Gl-gC-6sz"/>
                         <outlet property="matrixView" destination="uSr-tT-lag" id="JaB-A9-gYj"/>
+                        <outlet property="rowAlignment" destination="xVl-TU-X13" id="9TF-gx-wJh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

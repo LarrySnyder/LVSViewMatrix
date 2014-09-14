@@ -13,6 +13,8 @@
 @property (nonatomic, weak) IBOutlet UIView *matrixView;
 @property (nonatomic, weak) IBOutlet UITextField *addRowNum;
 @property (nonatomic, weak) IBOutlet UITextField *addColNum;
+@property (nonatomic, weak) IBOutlet UISegmentedControl *rowAlignment;
+@property (nonatomic, weak) IBOutlet UISegmentedControl *colAlignment;
 
 - (IBAction)handleLayoutCells:(id)sender;
 - (IBAction)handleAddRow:(id)sender;

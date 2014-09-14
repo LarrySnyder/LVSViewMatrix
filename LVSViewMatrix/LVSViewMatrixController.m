@@ -155,8 +155,8 @@
         [_userRowHeights insertObject:[NSNumber numberWithFloat:height] atIndex:rowNum];
         [_rowHeights insertObject:[NSNumber numberWithFloat:height] atIndex:rowNum];
         
-        // Insert item into _colAlignments
-        [_colAlignments insertObject:[NSNumber numberWithInteger:alignment] atIndex:rowNum];
+        // Insert item into _rowAlignments
+        [_rowAlignments insertObject:[NSNumber numberWithInteger:alignment] atIndex:rowNum];
         
         // Set animation duration
         CGFloat duration;
@@ -297,12 +297,30 @@
     for (int i = 0; i < self.numberOfRows; i++)
     {
         CGFloat xPos = CGRectGetMinX(self.view.bounds) + self.colMargin;
-        for (int j = 0; j < self.numberOfCols; j++) // USE FAST ENUMERATION??????
+        for (int j = 0; j < self.numberOfCols; j++)
         {
             if (_cells[i][j] != [NSNull null])
             {
                 UIView *cell = _cells[i][j];
-                cell.frame = CGRectMake(xPos, yPos, cell.frame.size.width, cell.frame.size.height);
+                CGFloat x, y;
+                
+                // Set horizontal alignment
+                if ([_rowAlignments[i] integerValue] == LVSRowAlignmentTop)
+                    y = yPos;
+                else if ([_rowAlignments[i] integerValue] == LVSRowAlignmentMiddle)
+                    y = yPos + ([_rowHeights[i] floatValue] - cell.frame.size.height) / 2.0;
+                else // LVSRowAlignmentBottom
+                    y = yPos + [_rowHeights[i] floatValue] - cell.frame.size.height;
+                
+                // Set vertical alignment
+                if ([_colAlignments[j] integerValue] == LVSColAlignmentLeft)
+                    x = xPos;
+                else if ([_colAlignments[j] integerValue] == LVSColAlignmentCenter)
+                    x = xPos + ([_colWidths[j] floatValue] - cell.frame.size.width) / 2.0;
+                else // LVSColAlignmentRight
+                    x = xPos + [_colWidths[j] floatValue] - cell.frame.size.width;
+                
+                cell.frame = CGRectMake(x, y, cell.frame.size.width, cell.frame.size.height);
                 [cell setNeedsDisplay];
             }
             xPos += [_colWidths[j] floatValue] + self.colMargin;

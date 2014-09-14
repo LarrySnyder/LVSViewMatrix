@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LVSViewMatrix/LVSViewMatrixController.m"
-            timestampString = "432416545.826678"
+            timestampString = "432424132.230063"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "323"
-            endingLineNumber = "323"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "-setRowHeights"
             landmarkType = "5">
          </BreakpointContent>
@@ -202,12 +202,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LVSViewMatrix/LVSViewController.m"
-            timestampString = "432416581.691419"
+            timestampString = "432424132.230063"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
             landmarkName = "-handleAddCol:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LVSViewMatrix/LVSViewMatrixController.m"
+            timestampString = "432424442.639942"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "304"
+            endingLineNumber = "304"
+            landmarkName = "-layoutCells"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

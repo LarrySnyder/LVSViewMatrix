@@ -82,8 +82,20 @@
         [newRow addObject:cell];
     }
     
+    LVSRowAlignment align;
+    if (self.rowAlignment.selectedSegmentIndex == 0)
+        align = LVSRowAlignmentTop;
+    else if (self.rowAlignment.selectedSegmentIndex == 1)
+        align = LVSRowAlignmentMiddle;
+    else
+        align = LVSRowAlignmentBottom;
+    
     // Insert row into matrix
-    [vmc insertRow:newRow atRow:[self.addRowNum.text intValue] animated:YES];
+    [vmc insertRow:newRow
+             atRow:[self.addRowNum.text intValue]
+        withHeight:-1
+     withAlignment:align
+          animated:YES];
 }
 
 - (IBAction)handleAddCol:(id)sender
@@ -100,8 +112,20 @@
         [newCol addObject:cell];
     }
     
+    LVSColAlignment align;
+    if (self.colAlignment.selectedSegmentIndex == 0)
+        align = LVSColAlignmentLeft;
+    else if (self.colAlignment.selectedSegmentIndex == 1)
+        align = LVSColAlignmentCenter;
+    else
+        align = LVSColAlignmentRight;
+    
     // Insert column into matrix
-    [vmc insertCol:newCol atCol:[self.addColNum.text intValue] animated:YES];
+    [vmc insertCol:newCol
+             atCol:[self.addColNum.text intValue]
+        withWidth:-1
+     withAlignment:align
+          animated:YES];
 }
 
 #pragma mark UITextFieldDelegate
