@@ -21,38 +21,6 @@ typedef enum : NSUInteger {
 } LVSColAlignment;
 
 
-#pragma mark --- LVSViewMatrixRow ---
-
-@interface LVSViewMatrixRow : NSObject
-
-/*
- NSMutableArray of cells in row. Allocated by init.
- */
-@property (nonatomic, strong) NSMutableArray *cells;
-
-/*
- Number of cells in row. Read only.
- */
-@property (nonatomic, readonly) NSInteger numCells;
-
-/*
- Row height. Set to anything <0 to set height automatically.
- Defaults to -1.
- */
-@property (nonatomic, assign) CGFloat height;
-
-/*
- Vertical alignment. Choose from {LVSRowAlignmentTop,
- LVSRowAlignmentMiddle, LVSRowAlignmentBottom}. Defaults to
- LVSRowAlignmentMiddle. */
-@property (nonatomic, assign) LVSRowAlignment alignment;
-
-@end
-
-
-
-
-#pragma mark --- LVSViewMatrixController ---
 
 @interface LVSViewMatrixController : UIViewController
 
@@ -71,25 +39,27 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) NSInteger numberOfRows;
 @property (nonatomic, readonly) NSInteger numberOfCols;
 
+#pragma mark Adding Rows and Columns
+
 /*
- Inserting rows and columns. 
- 
- insertRows:atRow:withHeight:
- row is an NSArray* containing cells, in order. If number of cells in row < number of 
+ insertRow:atRow:withHeight:withAlignment:animated:
+ - row is an NSArray* containing cells, in order. If number of cells in row < number of
  columns in matrix, remaining cells in new row are filled with NSNull.
- 
- To insert a row after the last row, set atRow to numberOfRows. Raises an exception 
+ - To insert a row after the last row, set atRow to numberOfRows. Raises an exception
  if atRow > numberOfRows. 
  
- To compute height automatically, set height to anything <0.
+ insertRow:atRow:
+ - Same as insertRow:atRow:withHeight:withAlignment:animated: but uses default values 
+ for height and alignment.
  
- Similar comments for insertCols:atCol:withWidth:
+ Similar comments for insertCol:atCol:withWidth:withAlignment:animated and insertCol:atCol:withWidth:.
  */
-- (void)insertRow:(LVSViewMatrixRow *)row atRow:(NSInteger)rowNum animated:(BOOL)animated;
-//- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum withHeight:(CGFloat)height animated:(BOOL)animated;
-//- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum withWidth:(CGFloat)width animated:(BOOL)animated;
+- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum withHeight:(CGFloat)height withAlignment:(LVSRowAlignment)alignment animated:(BOOL)animated;
+- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum animated:(BOOL)animated;
+- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum withWidth:(CGFloat)width withAlignment:(LVSColAlignment) alignment animated:(BOOL)animated;
+- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum animated:(BOOL)animated;
 
-#pragma mark Getting and Settings Cells
+#pragma mark Getting and Settings Views
 
 /*
  Adds a view to a given cell.
@@ -110,5 +80,15 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) CGFloat colMargin;
 
 - (void)layoutCells; // THIS SHOULD BE PRIVATE; ACCESS IT ANOTHER WAY
+
+/*
+ Set/get row height and column width. Set to anything <0 to set automatically.
+ If no height/width is set for a row/column, it defaults to -1. 
+ getHeightForRow: and getWidthForCol: return actual height/width if set to <0.
+ */
+- (void)setHeight:(CGFloat)height forRow:(NSInteger)row;
+- (void)setWidth:(CGFloat)width forCol:(NSInteger)col;
+- (CGFloat)getHeightForRow:(NSInteger)row;
+- (CGFloat)getWidthForCol:(NSInteger)col;
 
 @end

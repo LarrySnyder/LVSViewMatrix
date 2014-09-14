@@ -22,6 +22,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    self.addRowNum.delegate = self;
+    self.addColNum.delegate = self;
 }
 
 - (void)viewDidLayoutSubviews
@@ -68,15 +71,15 @@
 - (IBAction)handleAddRow:(id)sender
 {
     // Create new row
-    LVSViewMatrixRow *newRow = [[LVSViewMatrixRow alloc] init];
+    NSMutableArray *newRow = [[NSMutableArray alloc] initWithCapacity:vmc.numberOfCols];
     for (int j = 0; j < vmc.numberOfCols; j++)
     {
         // Create cell of random size and color
-        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, arc4random_uniform(100), arc4random_uniform(100))];
+        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, arc4random_uniform(25)+25, arc4random_uniform(25)+25)];
         cell.backgroundColor = [UIColor colorWithRed:(CGFloat)rand()/RAND_MAX green:(CGFloat)rand()/RAND_MAX blue:(CGFloat)rand()/RAND_MAX alpha:1.0];
         
         // Insert into row
-        [newRow.cells addObject:cell];
+        [newRow addObject:cell];
     }
     
     // Insert row into matrix
@@ -85,7 +88,29 @@
 
 - (IBAction)handleAddCol:(id)sender
 {
+    // Create new column
+    NSMutableArray *newCol = [[NSMutableArray alloc] initWithCapacity:vmc.numberOfRows];
+    for (int i = 0; i < vmc.numberOfRows; i++)
+    {
+        // Create cell of random size and color
+        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, arc4random_uniform(25)+25, arc4random_uniform(25)+25)];
+        cell.backgroundColor = [UIColor colorWithRed:(CGFloat)rand()/RAND_MAX green:(CGFloat)rand()/RAND_MAX blue:(CGFloat)rand()/RAND_MAX alpha:1.0];
+        
+        // Insert into column
+        [newCol addObject:cell];
+    }
+    
+    // Insert column into matrix
+    [vmc insertCol:newCol atCol:[self.addColNum.text intValue] animated:YES];
+}
 
+#pragma mark UITextFieldDelegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    
+    return YES;
 }
 
 @end
