@@ -13,32 +13,6 @@
 #define kInsertColAnimationDuration 1.0
 #endif
 
-#pragma mark --- LVSViewMatrixRow ---
-
-@implementation LVSViewMatrixRow
-
-- (id)init
-{
-    self = [super init];
-    if (self) {
-        self.height = -1;
-        self.alignment = LVSRowAlignmentMiddle;
-        self.cells = [[NSMutableArray alloc] init];
-    }
-    return self;
-}
-
-- (NSInteger)numCells
-{
-    return [self.cells count];
-}
-
-@end
-
-
-
-
-#pragma mark --- LVSViewMatrixController ---
 
 @interface LVSViewMatrixController ()
 
@@ -50,16 +24,19 @@
     // Can access using _cells[r][c]. All objects are of type UIView*
     NSMutableArray *_cells;
     
-    // Rows and columns in the matrix. _rows[r].cells[c] = _cols[c].rows[r] = _cells[r][c].
-    // All objects are of type LVSViewMatrixRow* or LVSViewMatrixCol*
-    NSMutableArray *_rows;
-    NSMutableArray *_cols;
+    // Row heights and column widths as specified by user. Values <0 indicate that height/width
+    // should be set automatically
+    NSMutableArray *_userRowHeights;
+    NSMutableArray *_userColWidths;
     
-    // Row heights and column widths. These are the actual computed heights and widths. If
-    // _rows[r].height or _cols[c].width are >= 0, that height and/or width are used; otherwise
-    // height and/or width are calculated automatically (and stored here)
+    // Actual row heights and column widths. If _rowHeights[r] = _userRowHeights[r] if _userRowHeights[r] < 0
+    // and = value set automatically otherwise
     NSMutableArray *_rowHeights;
     NSMutableArray *_colWidths;
+    
+    // Alignment
+    NSMutableArray *_rowAlignments;
+    NSMutableArray *_colAlignments;
 }
 
 #pragma mark Initializers
@@ -82,37 +59,30 @@
         self.rowMargin = 0.0;
         self.colMargin = 0.0;
         
-        // Initialize _cells, _rows, _cols
+        // Initialize _cells
         _cells = [[NSMutableArray alloc] initWithCapacity:numRows];
-        for (int i = 0; i < numRows; i++)
-        {
-            _cells[i] = [[NSMutableArray alloc] initWithCapacity:numCols];
-            for (int j = 0; j < numCols; j++)
-                _cells[i][j] = [NSNull null];
-        }
-        _rows = [[NSMutableArray alloc] initWithCapacity:numRows];
-        _cols = [[NSMutableArray alloc] initWithCapacity:numCols];
         
         // Initialize row heights and column widths
+        _userRowHeights = [[NSMutableArray alloc] initWithCapacity:numRows];
+        _userColWidths = [[NSMutableArray alloc] initWithCapacity:numCols];
         _rowHeights = [[NSMutableArray alloc] initWithCapacity:numRows];
         _colWidths = [[NSMutableArray alloc] initWithCapacity:numCols];
+        
+        // Initialize row and column alignments
+        _rowAlignments = [[NSMutableArray alloc] initWithCapacity:numRows];
+        _colAlignments = [[NSMutableArray alloc] initWithCapacity:numCols];
 
         // Insert empty rows and columns
         for (int i = 0; i < numRows; i++)
         {
-            LVSViewMatrixRow *row = [[LVSViewMatrixRow alloc] init];
+            NSMutableArray *row = [[NSMutableArray alloc] initWithCapacity:numCols];
             [self insertRow:row atRow:0 animated:NO];
-            
         }
         for (int j = 0; j < numCols; j++)
         {
-        
+            NSMutableArray *col = [[NSMutableArray alloc] initWithCapacity:numRows];
+            [self insertCol:col atCol:0 animated:NO];
         }
-/*            [self insertCol:[[NSMutableArray alloc] initWithCapacity:numRows]
-                      atCol:0
-                  withWidth:0
-                   animated:NO];*/
-        
     }
     return self;
 }
@@ -127,12 +97,15 @@
 
 - (NSInteger)numberOfRows
 {
-    return [_rows count];
+    return [_cells count];
 }
 
 - (NSInteger)numberOfCols
 {
-    return [_cols count];
+    if ([_cells count] == 0)
+        return 0;
+    else
+        return [((NSMutableArray *)_cells[0]) count];
 }
 
 #pragma mark View Stuff
@@ -149,9 +122,13 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark Size
+#pragma mark Adding Rows and Columns
 
-- (void)insertRow:(LVSViewMatrixRow *)row atRow:(NSInteger)rowNum animated:(BOOL)animated
+- (void)insertRow:(NSMutableArray *)row
+            atRow:(NSInteger)rowNum
+       withHeight:(CGFloat)height
+    withAlignment:(LVSRowAlignment)alignment
+         animated:(BOOL)animated
 {
     if (rowNum > self.numberOfRows)
     {
@@ -163,17 +140,23 @@
     else
     {
         // Add null entries at end of row, if necessary
-        for (int j = row.numCells; j < self.numberOfCols; j++)
-            row.cells[j] = [NSNull null];
+        for (int j = [row count]; j < self.numberOfCols; j++)
+            row[j] = [NSNull null];
         
         // Insert new row into matrix
-        [_rows insertObject:row atIndex:rowNum];
-        [_cells insertObject:row atIndex:rowNum];   // TODO fix tgis
+        [_cells insertObject:row atIndex:rowNum];
         
         // Add cells from new row as subviews
-        for (int j = 0; j < row.numCells; j++)
-            if (row.cells[j] != [NSNull null])
-                [self.view addSubview:(UIView *)row.cells[j]];
+        for (int j = 0; j < [row count]; j++)
+            if (row[j] != [NSNull null])
+                [self.view addSubview:(UIView *)row[j]];
+        
+        // Insert items into _userRowHeights and _rowHeights
+        [_userRowHeights insertObject:[NSNumber numberWithFloat:height] atIndex:rowNum];
+        [_rowHeights insertObject:[NSNumber numberWithFloat:height] atIndex:rowNum];
+        
+        // Insert item into _colAlignments
+        [_colAlignments insertObject:[NSNumber numberWithInteger:alignment] atIndex:rowNum];
         
         // Set animation duration
         CGFloat duration;
@@ -190,11 +173,23 @@
                              [self layoutCells];
                          }
                          completion:nil];
-        
     }
 }
 
-- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum withWidth:(CGFloat)width animated:(BOOL)animated
+- (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum animated:(BOOL)animated
+{
+    [self insertRow:row
+              atRow:rowNum
+         withHeight:-1
+      withAlignment:LVSRowAlignmentMiddle
+           animated:animated];
+}
+
+- (void)insertCol:(NSMutableArray *)col
+            atCol:(NSInteger)colNum
+        withWidth:(CGFloat)width
+    withAlignment:(LVSColAlignment)alignment
+         animated:(BOOL)animated
 {
     if (colNum > self.numberOfCols)
     {
@@ -205,17 +200,53 @@
     }
     else
     {
-        // Loop through rows
+        // Add null entries at end of column, if necessary
+        for (int i = [col count]; i < self.numberOfRows; i++)
+            col[i] = [NSNull null];
+        
+        // Insert new column into matrix rows
         for (int i = 0; i < self.numberOfRows; i++)
-        {
-/*            for (int j = 0; j < numCols; j++)
-                // Insert empty cell into row
-                [_cells[i] insertObject:[NSNull null] atIndex:col];
-  */      }
-    }
+            [_cells[i] insertObject:col[i] atIndex:colNum];
+        
+        // Add cells from new column as subviews
+        for (int i = 0; i < [col count]; i++)
+            if (col[i] != [NSNull null])
+                [self.view addSubview:(UIView *)col[i]];
+        
+        // Insert items into _userColWidths and _colWidths
+        [_userColWidths insertObject:[NSNumber numberWithFloat:width] atIndex:colNum];
+        [_colWidths insertObject:[NSNumber numberWithFloat:width] atIndex:colNum];
+        
+        // Insert item into _colAlignments
+        [_colAlignments insertObject:[NSNumber numberWithInteger:alignment] atIndex:colNum];
+        
+        // Set animation duration
+        CGFloat duration;
+        if (animated)
+            duration = kInsertRowAnimationDuration;
+        else
+            duration = 0.0;
+        
+        // Update layout to insert row in view
+        [UIView animateWithDuration:duration
+                              delay:0.0
+                            options:0
+                         animations:^{
+                             [self layoutCells];
+                         }
+                         completion:nil];    }
 }
 
-#pragma mark Getting and Setting Cells
+- (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum animated:(BOOL)animated
+{
+    [self insertCol:col
+              atCol:colNum
+          withWidth:-1
+      withAlignment:LVSColAlignmentCenter
+           animated:animated];
+}
+
+#pragma mark Getting and Setting Views
 
 - (void)setView:(UIView *)view forRow:(NSInteger)row forCol:(NSInteger)col
 {
@@ -225,6 +256,28 @@
 - (UIView *)viewInRow:(NSInteger)row forCol:(NSInteger)col
 {
     return _cells[row][col];
+}
+
+#pragma mark Layout
+
+- (void)setHeight:(CGFloat)height forRow:(NSInteger)row
+{
+    _rowHeights[row] = [NSNumber numberWithFloat:height];
+}
+
+- (void)setWidth:(CGFloat)width forCol:(NSInteger)col
+{
+    _colWidths[col] = [NSNumber numberWithFloat:width];
+}
+
+- (CGFloat)getHeightForRow:(NSInteger)row
+{
+    return [_rowHeights[row] floatValue];
+}
+
+- (CGFloat)getWidthForCol:(NSInteger)col
+{
+    return [_colWidths[col] floatValue];
 }
 
 
@@ -237,12 +290,7 @@
 {
     // Set row heights and column widths
     [self setRowHeights];
-    [self setcolWidths];
-    
-/*    for (int i = 0; i < self.numberOfRows; i++)
-        NSLog(@"row %d height %f", i, [_rowHeights[i] floatValue]);
-    for (int j = 0; j < self.numberOfCols; j++)
-        NSLog(@"col %d width %f", j, [_colWidths[j] floatValue]);*/
+    [self setColWidths];
     
     // Set frames
     CGFloat yPos = CGRectGetMinY(self.view.bounds) + self.rowMargin;
@@ -251,54 +299,67 @@
         CGFloat xPos = CGRectGetMinX(self.view.bounds) + self.colMargin;
         for (int j = 0; j < self.numberOfCols; j++) // USE FAST ENUMERATION??????
         {
-            UIView *cell = _cells[i][j];
-            cell.frame = CGRectMake(xPos, yPos, cell.frame.size.width, cell.frame.size.height);
-            [cell setNeedsDisplay];
+            if (_cells[i][j] != [NSNull null])
+            {
+                UIView *cell = _cells[i][j];
+                cell.frame = CGRectMake(xPos, yPos, cell.frame.size.width, cell.frame.size.height);
+                [cell setNeedsDisplay];
+            }
             xPos += [_colWidths[j] floatValue] + self.colMargin;
         }
         yPos += [_rowHeights[i] floatValue] + self.rowMargin;
     }
     
-    for (int i = 0; i < self.numberOfRows; i++)
-        for (int j = 0; j < self.numberOfCols; j++)
-            NSLog(@"%d %d %@", i, j, NSStringFromCGRect(((UIView *)_cells[i][j]).frame));
-    
     [self.view setNeedsDisplay];
 }
 
 /*
- Sets height of each row equal to the height of the tallest cell in the row.
+ Sets _rowHeights. If _userRowHeights[r] < 0, sets _rowHeights[r] = height of tallest cell in the row,
+ otherwise, sets _rowHeights[r] = _userRowHeights[r].
  */
 - (void)setRowHeights;
 {
     // Loop through rows
     for (int i = 0; i < self.numberOfRows; i++)
     {
-        // Find max height in row
-        CGFloat maxHeight = 0.0;
-        for (int j = 0; j < self.numberOfCols; j++)
-            maxHeight = MAX(maxHeight, ((UIView *)_cells[i][j]).frame.size.height);
-        
-        // Set row height
-        _rowHeights[i] = [NSNumber numberWithFloat:maxHeight];
+        if ([_userRowHeights[i] floatValue] < 0)
+        {
+            // Find max height in row
+            CGFloat maxHeight = 0.0;
+            for (int j = 0; j < self.numberOfCols; j++)
+                if (_cells[i][j] != [NSNull null])
+                    maxHeight = MAX(maxHeight, ((UIView *)_cells[i][j]).frame.size.height);
+            
+            // Set row height
+            _rowHeights[i] = [NSNumber numberWithFloat:maxHeight];
+        }
+        else
+            _rowHeights[i] = _userRowHeights[i];
     }
 }
 
 /*
- Sets width of each column equal to the width of the widest cell in the column.
+ Sets _colWidths. If _userColWidths[c] < 0, sets _colWidths[c] = width of widest cell in the column,
+ otherwise, sets _colWidths[c] = _userColWidths[c].
  */
-- (void)setcolWidths;
+- (void)setColWidths;
 {
     // Loop through columns
     for (int j = 0; j < self.numberOfCols; j++)
     {
-        // Find max width in column
-        CGFloat maxWidth = 0.0;
-        for (int i = 0; i < self.numberOfRows; i++)
-            maxWidth = MAX(maxWidth, ((UIView *)_cells[i][j]).frame.size.width);
-        
-        // Set column width
-        _colWidths[j] = [NSNumber numberWithFloat:maxWidth];
+        if ([_userColWidths[j] floatValue] < 0)
+        {
+            // Find max width in column
+            CGFloat maxWidth = 0.0;
+            for (int i = 0; i < self.numberOfRows; i++)
+                if (_cells[i][j] != [NSNull null])
+                    maxWidth = MAX(maxWidth, ((UIView *)_cells[i][j]).frame.size.width);
+            
+            // Set column width
+            _colWidths[j] = [NSNumber numberWithFloat:maxWidth];
+        }
+        else
+            _colWidths[j] = _userColWidths[j];
     }
 }
 
