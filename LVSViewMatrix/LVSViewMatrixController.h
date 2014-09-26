@@ -79,8 +79,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) CGFloat rowMargin;
 @property (nonatomic, assign) CGFloat colMargin;
 
-- (void)layoutCells; // THIS SHOULD BE PRIVATE; ACCESS IT ANOTHER WAY
-
 /*
  Set/get row height and column width. Set to anything <0 to set automatically.
  If no height/width is set for a row/column, it defaults to -1. 
@@ -90,5 +88,11 @@ typedef enum : NSUInteger {
 - (void)setWidth:(CGFloat)width forCol:(NSInteger)col;
 - (CGFloat)getHeightForRow:(NSInteger)row;
 - (CGFloat)getWidthForCol:(NSInteger)col;
+
+/*
+ Sets frames of all cells.
+ */
+- (void)layoutCellsAnimated:(BOOL)animated;
+
 
 @end

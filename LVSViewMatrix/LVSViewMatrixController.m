@@ -8,9 +8,8 @@
 
 #import "LVSViewMatrixController.h"
 
-#ifndef kInsertRowAnimationDuration
-#define kInsertRowAnimationDuration	1.0
-#define kInsertColAnimationDuration 1.0
+#ifndef kAnimationDuration
+#define kAnimationDuration	1.0
 #endif
 
 
@@ -158,21 +157,35 @@
         // Insert item into _rowAlignments
         [_rowAlignments insertObject:[NSNumber numberWithInteger:alignment] atIndex:rowNum];
         
-        // Set animation duration
-        CGFloat duration;
-        if (animated)
-            duration = kInsertRowAnimationDuration;
+        // If not animated, just do layout
+        if (!animated)
+            [self layoutCellsAnimated:NO];
         else
-            duration = 0.0;
-        
-        // Update layout to insert row in view
-        [UIView animateWithDuration:duration
-                              delay:0.0
-                            options:0
-                         animations:^{
-                             [self layoutCells];
-                         }
-                         completion:nil];
+        {
+            // Get new frames for all cells
+            NSMutableArray *newFrames = [self calcFrames];
+            
+            // Set frames of new cells to 0 size to initiate animation
+            for (int j = 0; j < self.numberOfCols; j++)
+                if (_cells[rowNum][j] != [NSNull null])
+                {
+                    UIView *cell = _cells[rowNum][j];
+                    CGRect newFrame = [newFrames[rowNum][j] CGRectValue];
+                    cell.frame = CGRectMake(CGRectGetMidX(newFrame), CGRectGetMinY(newFrame), 0.0, 0.0);
+                }
+            
+            // Animate insertion
+            [UIView animateWithDuration:kAnimationDuration
+                             animations:^{
+                                 for (int i = 0; i < self.numberOfRows; i++)
+                                     for (int j = 0; j < self.numberOfCols; j++)
+                                         if (_cells[i][j] != [NSNull null])
+                                             ((UIView *)_cells[i][j]).frame = [newFrames[i][j] CGRectValue];
+                             }];
+            
+            // Update layout to insert row in view
+//            [self layoutCellsAnimated:animated];
+        }
     }
 }
 
@@ -201,7 +214,7 @@
     else
     {
         // Add null entries at end of column, if necessary
-        for (int i = [col count]; i < self.numberOfRows; i++)
+        for (NSUInteger i = [col count]; i < self.numberOfRows; i++)
             col[i] = [NSNull null];
         
         // Insert new column into matrix rows
@@ -220,21 +233,36 @@
         // Insert item into _colAlignments
         [_colAlignments insertObject:[NSNumber numberWithInteger:alignment] atIndex:colNum];
         
-        // Set animation duration
-        CGFloat duration;
-        if (animated)
-            duration = kInsertRowAnimationDuration;
+        // If not animated, just do layout
+        if (!animated)
+            [self layoutCellsAnimated:NO];
         else
-            duration = 0.0;
+        {
+            // Get new frames for all cells
+            NSMutableArray *newFrames = [self calcFrames];
+            
+            // Set frames of new cells to 0 size to initiate animation
+            for (int i = 0; i < self.numberOfRows; i++)
+                if (_cells[i][colNum] != [NSNull null])
+                {
+                    UIView *cell = _cells[i][colNum];
+                    CGRect newFrame = [newFrames[i][colNum] CGRectValue];
+                    cell.frame = CGRectMake(CGRectGetMinX(newFrame), CGRectGetMidY(newFrame), 0.0, 0.0);
+                }
+            
+            // Animate insertion
+            [UIView animateWithDuration:kAnimationDuration
+                             animations:^{
+                                 for (int i = 0; i < self.numberOfRows; i++)
+                                     for (int j = 0; j < self.numberOfCols; j++)
+                                         if (_cells[i][j] != [NSNull null])
+                                             ((UIView *)_cells[i][j]).frame = [newFrames[i][j] CGRectValue];
+                             }];
+        }
         
-        // Update layout to insert row in view
-        [UIView animateWithDuration:duration
-                              delay:0.0
-                            options:0
-                         animations:^{
-                             [self layoutCells];
-                         }
-                         completion:nil];    }
+        // Update layout to insert column in view
+//        [self layoutCellsAnimated:animated];
+    }
 }
 
 - (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum animated:(BOOL)animated
@@ -281,13 +309,70 @@
 }
 
 
+/*
+ Sets row heights and column widths, then sets frames of all cells. 
+ */
+- (void)layoutCellsAnimated:(BOOL)animated
+{
+    // Calculate frames
+    NSMutableArray *frames = [self calcFrames];
+    
+    // Determine duration
+    CGFloat duration;
+    if (animated)
+        duration = kAnimationDuration;
+    else
+        duration = 0.0;
+    
+    // Set frames
+    [UIView animateWithDuration:duration
+                     animations:^{
+                         for (int i = 0; i < self.numberOfRows; i++)
+                             for (int j = 0; j < self.numberOfCols; j++)
+                                 if (_cells[i][j] != [NSNull null])
+                                 {
+                                     UIView *cell = _cells[i][j];
+                                     cell.frame = [frames[i][j] CGRectValue];
+                                     [cell setNeedsDisplay];
+                                 }
+                     }];
+    
+    [self.view setNeedsDisplay];
+}
+
 #pragma mark Private - Layout
 
 /* 
- Sets row heights and column widths, then sets frames of all cells. 
+ Sets frames of all cells in matrix to the frames specified in frames.
+ Frames must be a 2D array organized like _cells. Frames must be stored as
+ CGRects converted to NSValue, otherwise an exception will be raised.
+ Calling calcFrames and then calling setFramesTo using the frames returned
+ is the same as calling layoutCells:animated(=NO). But separating the two allows
+ something to be done in between, e.g., set temporary frames at start of animation.
  */
-- (void)layoutCells
+- (void)setFramesTo:(NSMutableArray *)frames
 {
+    for (int i = 0; i < self.numberOfRows; i++)
+        for (int j = 0; j < self.numberOfCols; j++)
+            if (frames[i][j] != [NSNull null]) // TODO: USE TRY BLOCK
+                if (_cells[i][j] != [NSNull null])
+                    ((UIView *)_cells[i][j]).frame = [frames[i][j] CGRectValue];
+}
+
+/* 
+ Returns 2D array of frames corresponding to matrix cells after layout. Entries in
+ the array are of type NSValue; use rect = [array[i][j] CGRectValue] to recover.
+ Sets row heights and column widths first.
+ Calling calcFrames and then calling setFramesTo using the frames returned
+ is the same as calling layoutFrames:animated(=NO).
+ */
+- (NSMutableArray *)calcFrames
+{
+    // Create array
+    NSMutableArray *frames = [[NSMutableArray alloc] initWithCapacity:self.numberOfRows];
+    for (int i = 0; i < self.numberOfRows; i++)
+        frames[i] = [[NSMutableArray alloc] initWithCapacity:self.numberOfCols];
+    
     // Set row heights and column widths
     [self setRowHeights];
     [self setColWidths];
@@ -320,15 +405,15 @@
                 else // LVSColAlignmentRight
                     x = xPos + [_colWidths[j] floatValue] - cell.frame.size.width;
                 
-                cell.frame = CGRectMake(x, y, cell.frame.size.width, cell.frame.size.height);
-                [cell setNeedsDisplay];
+                CGRect frame = CGRectMake(x, y, cell.frame.size.width, cell.frame.size.height);
+                frames[i][j] = [NSValue valueWithCGRect:frame];
             }
             xPos += [_colWidths[j] floatValue] + self.colMargin;
         }
         yPos += [_rowHeights[i] floatValue] + self.rowMargin;
     }
     
-    [self.view setNeedsDisplay];
+    return frames;
 }
 
 /*

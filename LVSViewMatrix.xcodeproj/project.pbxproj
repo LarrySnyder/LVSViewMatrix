@@ -205,6 +205,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Larry Snyder";
 				TargetAttributes = {
+					460D971A19C3CB0C00155416 = {
+						DevelopmentTeam = 84GWP85T9Z;
+					};
 					460D973B19C3CB0C00155416 = {
 						TestTargetID = 460D971A19C3CB0C00155416;
 					};
@@ -383,10 +386,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LVSViewMatrix/LVSViewMatrix-Prefix.pch";
 				INFOPLIST_FILE = "LVSViewMatrix/LVSViewMatrix-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -396,10 +402,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LVSViewMatrix/LVSViewMatrix-Prefix.pch";
 				INFOPLIST_FILE = "LVSViewMatrix/LVSViewMatrix-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -463,6 +472,7 @@
 				460D974F19C3CB0C00155416 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		460D975019C3CB0C00155416 /* Build configuration list for PBXNativeTarget "LVSViewMatrixTests" */ = {
 			isa = XCConfigurationList;
@@ -471,6 +481,7 @@
 				460D975219C3CB0C00155416 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

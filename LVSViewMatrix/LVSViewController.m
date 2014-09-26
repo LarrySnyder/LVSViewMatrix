@@ -29,6 +29,9 @@
 
 - (void)viewDidLayoutSubviews
 {
+    if (vmc)
+        return;
+    
     vmc = [[LVSViewMatrixController alloc] initWithNumRows:3 withNumCols:3];
     vmc.view = self.matrixView;
     
@@ -65,7 +68,7 @@
 
 - (IBAction)handleLayoutCells:(id)sender
 {
-    [vmc layoutCells];
+    [vmc layoutCellsAnimated:YES];
 }
 
 - (IBAction)handleAddRow:(id)sender

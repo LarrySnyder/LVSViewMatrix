@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>A80A6647-800D-4964-AEBA-9EEBBB12580B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>LVSViewMatrix</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>92A77AB332BF2370603101E7D0D36FE6F8E13B67</key>
+		<string>https://github.com/LarrySnyder/LVSViewMatrix.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>LVSViewMatrix.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>92A77AB332BF2370603101E7D0D36FE6F8E13B67</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/LarrySnyder/LVSViewMatrix.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>92A77AB332BF2370603101E7D0D36FE6F8E13B67</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>92A77AB332BF2370603101E7D0D36FE6F8E13B67</string>
+			<key>IDESourceControlWCCName</key>
+			<string>LVSViewMatrix</string>
+		</dict>
+	</array>
+</dict>
+</plist>
