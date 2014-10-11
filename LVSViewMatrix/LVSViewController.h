@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LVSViewController : UIViewController <UITextFieldDelegate>
+#import "LVSViewMatrixController.h"
+
+@interface LVSViewController : UIViewController <UITextFieldDelegate, LVSViewMatrixControllerDelegate>
 
 @property (nonatomic, weak) IBOutlet UIView *matrixView;
 @property (nonatomic, weak) IBOutlet UITextField *addRowNum;

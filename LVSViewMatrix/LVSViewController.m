@@ -29,11 +29,11 @@
 
 - (void)viewDidLayoutSubviews
 {
-    if (vmc)
-        return;
-    
     vmc = [[LVSViewMatrixController alloc] initWithNumRows:3 withNumCols:3];
-    vmc.view = self.matrixView;
+    vmc.view.frame = CGRectMake(0, 114, self.view.frame.size.width, self.view.frame.size.width);
+    vmc.view.backgroundColor = [UIColor lightGrayColor];
+    vmc.delegate = self;
+    [self.view addSubview:vmc.view];
     
     vmc.rowMargin = 5;
     vmc.colMargin = 5;
@@ -41,23 +41,13 @@
     // Create labels of random sizes
     for (int i = 1; i <= 9; i++)
     {
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(arc4random_uniform(vmc.view.frame.size.width - 100), arc4random_uniform(vmc.view.frame.size.height - 100), arc4random_uniform(25)+25, arc4random_uniform(25)+25)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(arc4random_uniform(vmc.view.frame.size.width - 100), arc4random_uniform(vmc.view.frame.size.height - 100), arc4random_uniform(50)+50, arc4random_uniform(50)+50)];
         label.backgroundColor = [UIColor colorWithRed:0.5 green:0.0 blue:0.5 alpha:1.0];
 //        label.backgroundColor = [UIColor colorWithRed:(CGFloat)rand()/RAND_MAX green:(CGFloat)rand()/RAND_MAX blue:(CGFloat)rand()/RAND_MAX alpha:1.0];
         label.text = [NSString stringWithFormat:@"%d", i];
         [vmc.view addSubview:label];
         [vmc setView:label forRow:((i-1) / 3) forCol:((i-1) % 3)];
     }
-
-/*    for (int i = 1; i <= 9; i++)
-    {
-        UIView *view = [self.view viewWithTag:i];
-        [vmc setView:view forRow:((i-1) / 3) forCol:((i-1) % 3)];
-    }*/
-    
-    NSLog(@"%d %d", vmc.numberOfRows, vmc.numberOfCols);
-   
-//    [vmc layoutCells];
 }
 
 - (void)didReceiveMemoryWarning
@@ -130,6 +120,41 @@
      withAlignment:align
           animated:YES];
 }
+
+#pragma mark LVSViewMatrixControllerDelegate
+
+- (NSArray *)viewMatrix:(LVSViewMatrixController *)viewMatrix rowToInsertAtRow:(NSInteger)row
+{
+    NSMutableArray *newRow = [[NSMutableArray alloc] initWithCapacity:viewMatrix.numberOfCols];
+    for (int j = 0; j < viewMatrix.numberOfCols; j++)
+    {
+        // Create cell of random size and color
+        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, arc4random_uniform(25)+25, arc4random_uniform(25)+25)];
+        cell.backgroundColor = [UIColor colorWithRed:(CGFloat)rand()/RAND_MAX green:(CGFloat)rand()/RAND_MAX blue:(CGFloat)rand()/RAND_MAX alpha:1.0];
+        
+        // Insert into row
+        [newRow addObject:cell];
+    }
+    
+    return newRow;
+}
+
+- (NSArray *)viewMatrix:(LVSViewMatrixController *)viewMatrix colToInsertAtCol:(NSInteger)col
+{
+    NSMutableArray *newCol = [[NSMutableArray alloc] initWithCapacity:viewMatrix.numberOfRows];
+    for (int i = 0; i < viewMatrix.numberOfRows; i++)
+    {
+        // Create cell of random size and color
+        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, arc4random_uniform(25)+25, arc4random_uniform(25)+25)];
+        cell.backgroundColor = [UIColor colorWithRed:(CGFloat)rand()/RAND_MAX green:(CGFloat)rand()/RAND_MAX blue:(CGFloat)rand()/RAND_MAX alpha:1.0];
+        
+        // Insert into column
+        [newCol addObject:cell];
+    }
+    
+    return newCol;
+}
+
 
 #pragma mark UITextFieldDelegate
 

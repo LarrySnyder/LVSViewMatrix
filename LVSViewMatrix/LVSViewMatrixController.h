@@ -20,6 +20,35 @@ typedef enum : NSUInteger {
     LVSColAlignmentRight
 } LVSColAlignment;
 
+/* 
+ Tiny object to store (row,col) for a cell. 
+ */
+@interface LVSCellLoc : NSObject
+@property (nonatomic, assign) int row;
+@property (nonatomic, assign) int col;
++ (LVSCellLoc *)cellLocwithRow:(int)row col:(int)col;
+@end
+/*struct LVSCellLoc {
+    NSInteger row;
+    NSInteger col;
+};
+typedef struct LVSCellLoc LVSCellLoc;*/
+
+@class LVSViewMatrixController;
+
+#pragma mark LVSViewMatrixControllerDelegate
+
+@protocol LVSViewMatrixControllerDelegate <NSObject>
+
+/* 
+ Asks the delegate for an array of cells to insert as a new row at a given location.
+ Raises exception if delegate provides a row/column with the wrong number of cells.
+ */
+- (NSArray *)viewMatrix:(LVSViewMatrixController *)viewMatrix rowToInsertAtRow:(NSInteger)row;
+- (NSArray *)viewMatrix:(LVSViewMatrixController *)viewMatrix colToInsertAtCol:(NSInteger)col;
+
+// TODO: add methods for getting alignment and size
+@end
 
 
 @interface LVSViewMatrixController : UIViewController
@@ -30,6 +59,11 @@ typedef enum : NSUInteger {
  Designated initializer. 
  */
 - (id)initWithNumRows:(NSInteger)numRows withNumCols:(NSInteger)numCols;
+
+/*
+ Delegate.
+ */
+@property (nonatomic, weak) id <LVSViewMatrixControllerDelegate> delegate;
 
 #pragma mark Size
 
@@ -93,6 +127,21 @@ typedef enum : NSUInteger {
  Sets frames of all cells.
  */
 - (void)layoutCellsAnimated:(BOOL)animated;
+
+/*
+ Returns LVSCellLoc containing row and column that contain a given point. Point
+ must be in view matrix's coordinates. If the point is not contained in the table, 
+ returns an LVSCellLoc containing (-1,-1).
+ */
+- (LVSCellLoc *)locationInTableOfPoint:(CGPoint)point;
+
+/*
+ Returns CGRect equal to the union of all cells in a given row or column.
+ Rect is in view matrix's own coordinates.
+ Returns CGRectZero if the given row or column does not exist.
+ */
+- (CGRect)rectForRow:(NSInteger)row;
+- (CGRect)rectForCol:(NSInteger)col;
 
 
 @end
