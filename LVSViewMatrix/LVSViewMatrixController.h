@@ -73,7 +73,7 @@ typedef struct LVSCellLoc LVSCellLoc;*/
 @property (nonatomic, readonly) NSInteger numberOfRows;
 @property (nonatomic, readonly) NSInteger numberOfCols;
 
-#pragma mark Adding Rows and Columns
+#pragma mark Inserting and Deleting Rows and Columns
 
 /*
  insertRow:atRow:withHeight:withAlignment:animated:
@@ -92,6 +92,12 @@ typedef struct LVSCellLoc LVSCellLoc;*/
 - (void)insertRow:(NSMutableArray *)row atRow:(NSInteger)rowNum animated:(BOOL)animated;
 - (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum withWidth:(CGFloat)width withAlignment:(LVSColAlignment) alignment animated:(BOOL)animated;
 - (void)insertCol:(NSMutableArray *)col atCol:(NSInteger)colNum animated:(BOOL)animated;
+
+/*
+ Delete Remove row or column.
+ */
+- (void)deleteRow:(NSInteger)rowNum animated:(BOOL)animated;
+- (void)deleteCol:(NSInteger)colNum animated:(BOOL)animated;
 
 #pragma mark Getting and Settings Views
 
