@@ -155,6 +155,26 @@
     return newCol;
 }
 
+/*- (LVSRowAlignment)viewMatrix:(LVSViewMatrixController *)viewMatrix alignmentForRow:(NSInteger)row
+{
+    return LVSRowAlignmentTop;
+}
+
+- (CGFloat)viewMatrix:(LVSViewMatrixController *)viewMatrix heightForRow:(NSInteger)row
+{
+    return 100;
+}*/
+
+/*- (LVSColAlignment)viewMatrix:(LVSViewMatrixController *)viewMatrix alignmentForCol:(NSInteger)col
+{
+    return LVSColAlignmentRight;
+}
+
+- (CGFloat)viewMatrix:(LVSViewMatrixController *)viewMatrix widthForCol:(NSInteger)col
+{
+    return 100;
+}*/
+
 
 #pragma mark UITextFieldDelegate
 

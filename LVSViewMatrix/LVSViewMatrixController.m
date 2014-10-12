@@ -73,10 +73,11 @@ typedef enum : NSUInteger {
     NSInteger _pinchRowCol1;            //      pinchRowCol0 is always top- or left-most pinch
     
     // Info about cells being inserted
-    NSArray *_cellsBeingInserted;       // new row/col (depending on pinch type) being inserted
-    CGFloat _maxSizeOfCellsBeingInserted;  // max height/width (depending on pinch type) of cells being inserted
+    NSArray *_cellsBeingInserted;           // new row/col (depending on pinch type) being inserted
+    CGFloat _maxSizeOfCellsBeingInserted;   // max height/width (depending on pinch type) of cells being inserted
+    CGFloat _userSizeOfCellsBeingInserted;  // delegate-specified height/width of cells being inserted
     NSMutableArray *_origSizesOfCellsBeingInserted;
-                                        // original sizes of cells being inserted (position is ignored but size is preserved)
+                                            // original sizes of cells being inserted (position is ignored but size is preserved)
 }
 
 #pragma mark Initializers
@@ -583,7 +584,6 @@ typedef enum : NSUInteger {
                 _origSizesOfCellsBeingInserted[j] = [NSValue valueWithCGSize:cell.frame.size];
                 _maxSizeOfCellsBeingInserted = MAX(_maxSizeOfCellsBeingInserted, cell.frame.size.width);
             }
-            NSLog(@"%f", _maxSizeOfCellsBeingInserted);
         }
         else
         {
@@ -604,11 +604,24 @@ typedef enum : NSUInteger {
             for (UIView *cell in _cellsBeingInserted)
                 cell.frame = CGRectZero;
             
-            // Insert new row
+            // Ask delegate for height for new row (optional method -- if not present, use default)
+            if ([self.delegate respondsToSelector:@selector(viewMatrix:heightForRow:)])
+                _userSizeOfCellsBeingInserted = [self.delegate viewMatrix:self heightForRow:_pinchRowCol1];
+            else
+                _userSizeOfCellsBeingInserted = -1;
+            
+            // Ask delegate for alignment for new row (optional method -- if not present, use default)
+            LVSRowAlignment rowAlignment;
+            if ([self.delegate respondsToSelector:@selector(viewMatrix:alignmentForRow:)])
+                rowAlignment = [self.delegate viewMatrix:self alignmentForRow:_pinchRowCol1];
+            else
+                rowAlignment = LVSRowAlignmentMiddle;
+            
+            // Insert new row; don't use delegate-specified height until insertion is complete
             [self insertRow:[_cellsBeingInserted mutableCopy]
                       atRow:_pinchRowCol1
                  withHeight:-1
-              withAlignment:LVSRowAlignmentMiddle
+              withAlignment:rowAlignment
                    animated:NO];
         }
         else if (_currentPinchType == LVSPinchTypeCol)
@@ -617,11 +630,24 @@ typedef enum : NSUInteger {
             for (UIView *cell in _cellsBeingInserted)
                 cell.frame = CGRectZero;
             
-            // Insert new column
+            // Ask delegate for width for new column (optional method -- if not present, use default)
+            if ([self.delegate respondsToSelector:@selector(viewMatrix:widthForCol:)])
+                _userSizeOfCellsBeingInserted = [self.delegate viewMatrix:self widthForCol:_pinchRowCol1];
+            else
+                _userSizeOfCellsBeingInserted = -1;
+            
+            // Ask delegate for alignment for new column (optional method -- if not present use default)
+            LVSColAlignment colAlignment;
+            if ([self.delegate respondsToSelector:@selector(viewMatrix:alignmentForCol:)])
+                colAlignment = [self.delegate viewMatrix:self alignmentForCol:_pinchRowCol1];
+            else
+                colAlignment = LVSColAlignmentCenter;
+            
+            // Insert new column; don't use delegate-specified width until insertion is complete
             [self insertCol:[_cellsBeingInserted mutableCopy]
                       atCol:_pinchRowCol1
                   withWidth:-1
-              withAlignment:LVSColAlignmentCenter
+              withAlignment:colAlignment
                    animated:NO];
         }
     }
@@ -657,12 +683,15 @@ typedef enum : NSUInteger {
         
         // If total offset > new row height (plus margin, plus a bit more),
         // reduce offsets
-        CGFloat maxTotalOffset = 1.1 * (_maxSizeOfCellsBeingInserted + self.rowMargin);
+        CGFloat maxTotalOffset = 1.1 * MAX(_maxSizeOfCellsBeingInserted + self.rowMargin, _userSizeOfCellsBeingInserted);
         if (offsetDn - offsetUp > maxTotalOffset) // NB: offsetUp <= 0
         {
-            offsetUp *= maxTotalOffset / (offsetDn - offsetUp);
-            offsetDn *= maxTotalOffset / (offsetDn - offsetUp);
+            CGFloat scale = maxTotalOffset / (offsetDn - offsetUp);
+            offsetUp *= scale;
+            offsetDn *= scale;
         }
+        
+        NSLog(@"%f", offsetDn - offsetUp);
     }
     else if (_currentPinchType == LVSPinchTypeCol)
     {
@@ -684,12 +713,16 @@ typedef enum : NSUInteger {
         
         // If total offset > new col width (plus margin, plus a bit more),
         // reduce offsets
-        CGFloat maxTotalOffset = 1.1 * (_maxSizeOfCellsBeingInserted + self.colMargin);
+        CGFloat maxTotalOffset = 1.1 * MAX(_maxSizeOfCellsBeingInserted + self.colMargin, _userSizeOfCellsBeingInserted);
         if (offsetRt - offsetLt > maxTotalOffset) // NB: offsetLt <= 0
         {
-            offsetLt *= maxTotalOffset / (offsetRt - offsetLt);
-            offsetDn *= maxTotalOffset / (offsetRt - offsetLt);
+            CGFloat scale = maxTotalOffset / (offsetRt - offsetLt);
+            offsetLt *= scale;
+            offsetRt *= scale;
         }
+        
+        NSLog(@"%f", offsetRt - offsetLt);
+
     }
     
     // If state = began or changed, move rows/cols
@@ -702,7 +735,8 @@ typedef enum : NSUInteger {
             for (int j = 0; j < self.numberOfCols; j++)
             {
                 UIView *cell = _cellsBeingInserted[j];
-                CGFloat height = MAX(0.0, offsetDn - offsetUp - self.rowMargin);
+                CGFloat height = MIN([_origSizesOfCellsBeingInserted[j] CGSizeValue].height,
+                                     MAX(0.0, offsetDn - offsetUp - self.rowMargin));
                 CGFloat width = [_origSizesOfCellsBeingInserted[j] CGSizeValue].width *
                     (height / [_origSizesOfCellsBeingInserted[j] CGSizeValue].height);
                 cell.frame = CGRectMake(0.0, 0.0, width, height);
@@ -728,7 +762,8 @@ typedef enum : NSUInteger {
             for (int i = 0; i < self.numberOfRows; i++)
             {
                 UIView *cell = _cellsBeingInserted[i];
-                CGFloat width = MAX(0.0, offsetRt - offsetUp - self.colMargin);
+                CGFloat width = MIN([_origSizesOfCellsBeingInserted[i] CGSizeValue].width,
+                                    MAX(0.0, offsetRt - offsetUp - self.colMargin));
                 CGFloat height = [_origSizesOfCellsBeingInserted[i] CGSizeValue].height *
                     (width / [_origSizesOfCellsBeingInserted[i] CGSizeValue].width);
                 cell.frame = CGRectMake(0.0, 0.0, width, height);
@@ -758,11 +793,25 @@ typedef enum : NSUInteger {
     {
         // Delete new row/col?
         BOOL deleteNew = YES;
-        if ( (gesture.state == UIGestureRecognizerStateEnded) &&
-             (((_currentPinchType == LVSPinchTypeRow) && (offsetDn - offsetUp > _maxSizeOfCellsBeingInserted)) ||
-             ((_currentPinchType == LVSPinchTypeCol) && (offsetRt - offsetLt > _maxSizeOfCellsBeingInserted))) )
-            deleteNew = NO;
-
+        if (gesture.state == UIGestureRecognizerStateEnded)
+        {
+            // Calculate pinch size and required size, and compare
+            if (_currentPinchType == LVSPinchTypeRow)
+            {
+                CGFloat pinchHeight = offsetDn - offsetUp;
+                CGFloat requiredHeight = MAX(_maxSizeOfCellsBeingInserted + self.rowMargin, _userSizeOfCellsBeingInserted);
+                if (pinchHeight >= requiredHeight)
+                    deleteNew = NO;
+            }
+            else // _currentpinchType == LVSPinchTypeCol
+            {
+                CGFloat pinchWidth = offsetRt - offsetLt;
+                CGFloat requiredWidth = MAX(_maxSizeOfCellsBeingInserted + self.colMargin, _userSizeOfCellsBeingInserted);
+                if (pinchWidth >= requiredWidth)
+                    deleteNew = NO;
+            }
+        }
+        
         // Do deletion, or do final layout
         if (deleteNew)
         {
@@ -781,6 +830,14 @@ typedef enum : NSUInteger {
                              completion:nil];
         }
         else
+        {
+            // Update delegate-specified height/width (do this here, rather than when we insert row/col,
+            // so that delegate-specified height/width isn't used during animation)
+            if (_currentPinchType == LVSPinchTypeRow)
+                _userRowHeights[_pinchRowCol1] = [NSNumber numberWithFloat:_userSizeOfCellsBeingInserted];
+            else
+                _userColWidths[_pinchRowCol1] = [NSNumber numberWithFloat:_userSizeOfCellsBeingInserted];
+            
             // Do final layout
             [UIView animateWithDuration:0.5
                                   delay:0.0
@@ -791,6 +848,7 @@ typedef enum : NSUInteger {
                                  [self layoutCellsAnimated:YES];
                              }
                              completion:nil];
+        }
         
         // Reset _currentPinchType and free arrays for cells being inserted
         _currentPinchType = LVSPinchTypeNone;

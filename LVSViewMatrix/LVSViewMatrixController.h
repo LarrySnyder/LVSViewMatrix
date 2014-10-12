@@ -28,11 +28,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) int col;
 + (LVSCellLoc *)cellLocwithRow:(int)row col:(int)col;
 @end
-/*struct LVSCellLoc {
-    NSInteger row;
-    NSInteger col;
-};
-typedef struct LVSCellLoc LVSCellLoc;*/
 
 @class LVSViewMatrixController;
 
@@ -46,6 +41,15 @@ typedef struct LVSCellLoc LVSCellLoc;*/
  */
 - (NSArray *)viewMatrix:(LVSViewMatrixController *)viewMatrix rowToInsertAtRow:(NSInteger)row;
 - (NSArray *)viewMatrix:(LVSViewMatrixController *)viewMatrix colToInsertAtCol:(NSInteger)col;
+
+/*
+ Asks the delegate for alignment and size for new row/col at a given location.
+ */
+@optional
+- (LVSRowAlignment)viewMatrix:(LVSViewMatrixController *)viewMatrix alignmentForRow:(NSInteger)row;
+- (LVSColAlignment)viewMatrix:(LVSViewMatrixController *)viewMatrix alignmentForCol:(NSInteger)col;
+- (CGFloat)viewMatrix:(LVSViewMatrixController *)viewMatrix heightForRow:(NSInteger)row;
+- (CGFloat)viewMatrix:(LVSViewMatrixController *)viewMatrix widthForCol:(NSInteger)col;
 
 // TODO: add methods for getting alignment and size
 @end

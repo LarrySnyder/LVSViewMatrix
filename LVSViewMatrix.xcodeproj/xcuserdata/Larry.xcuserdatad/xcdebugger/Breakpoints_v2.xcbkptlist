@@ -9,44 +9,12 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "LVSViewMatrix/LVSViewController.m"
-            timestampString = "433627338.589356"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
-            landmarkName = "-handleAddRow:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LVSViewMatrix/LVSViewController.m"
-            timestampString = "433599063.748006"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
-            landmarkName = "-viewDidLayoutSubviews"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "LVSViewMatrix/LVSViewMatrixController.m"
-            timestampString = "434769887.962875"
+            timestampString = "434841488.024688"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "909"
-            endingLineNumber = "909"
+            startingLineNumber = "981"
+            endingLineNumber = "981"
             landmarkName = "-setRowHeights"
             landmarkType = "5">
          </BreakpointContent>
@@ -57,13 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "LVSViewMatrix/LVSViewController.m"
-            timestampString = "433627338.589356"
+            filePath = "LVSViewMatrix/LVSViewMatrixController.m"
+            timestampString = "434841488.024688"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "-handleAddCol:"
+            startingLineNumber = "795"
+            endingLineNumber = "795"
+            landmarkName = "-handlePinch:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -74,28 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LVSViewMatrix/LVSViewMatrixController.m"
-            timestampString = "434769887.962875"
+            timestampString = "434808715.698749"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "887"
-            endingLineNumber = "887"
-            landmarkName = "-calcFramesWithRowOffsets:withColOffsets:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            condition = "offsetDn - offsetUp &gt; 50"
-            continueAfterRunningActions = "No"
-            filePath = "LVSViewMatrix/LVSViewMatrixController.m"
-            timestampString = "434769574.927079"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "714"
-            endingLineNumber = "714"
+            startingLineNumber = "720"
+            endingLineNumber = "720"
             landmarkName = "-handlePinch:"
             landmarkType = "5">
          </BreakpointContent>
