@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LVSViewMatrix/LVSViewMatrixController.m"
-            timestampString = "434664991.155316"
+            timestampString = "434769887.962875"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "822"
-            endingLineNumber = "822"
+            startingLineNumber = "909"
+            endingLineNumber = "909"
             landmarkName = "-setRowHeights"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LVSViewMatrix/LVSViewMatrixController.m"
-            timestampString = "434665077.884215"
+            timestampString = "434769887.962875"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "663"
-            endingLineNumber = "663"
+            startingLineNumber = "887"
+            endingLineNumber = "887"
+            landmarkName = "-calcFramesWithRowOffsets:withColOffsets:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            condition = "offsetDn - offsetUp &gt; 50"
+            continueAfterRunningActions = "No"
+            filePath = "LVSViewMatrix/LVSViewMatrixController.m"
+            timestampString = "434769574.927079"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "714"
+            endingLineNumber = "714"
             landmarkName = "-handlePinch:"
             landmarkType = "5">
          </BreakpointContent>

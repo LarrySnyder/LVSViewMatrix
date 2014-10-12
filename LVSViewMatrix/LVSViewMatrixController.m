@@ -71,7 +71,8 @@ typedef enum : NSUInteger {
     CGPoint _startPinchLoc1;            //      or left-most pinch (for col pinches)
     NSInteger _pinchRowCol0;            // index of rows/cols (depending on pinch type) pinch started on
     NSInteger _pinchRowCol1;            //      pinchRowCol0 is always top- or left-most pinch
-    NSMutableArray *_origFrames;
+    
+    // Info about cells being inserted
     NSArray *_cellsBeingInserted;       // new row/col (depending on pinch type) being inserted
     CGFloat _maxSizeOfCellsBeingInserted;  // max height/width (depending on pinch type) of cells being inserted
     NSMutableArray *_origSizesOfCellsBeingInserted;
@@ -100,10 +101,6 @@ typedef enum : NSUInteger {
         
         // Initialize _cells
         _cells = [[NSMutableArray alloc] initWithCapacity:numRows];
-        
-        // Initialize row/col origins
-        //_rowOrigins = [[NSMutableArray alloc] initWithCapacity:numRows];
-        //_colOrigins = [[NSMutableArray alloc] initWithCapacity:numCols];
         
         // Initialize row heights and column widths
         _userRowHeights = [[NSMutableArray alloc] initWithCapacity:numRows];
@@ -163,13 +160,6 @@ typedef enum : NSUInteger {
     // Set up gesture recognizers
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
-    
-    for (UIGestureRecognizer *gr in [self.view gestureRecognizers])
-        NSLog(@"%@", gr.description);
-    for (UIView *subview in [self.view subviews])
-        for (UIGestureRecognizer *gr in [subview gestureRecognizers])
-            NSLog(@"%@", gr.description);
-    
 }
 
 - (void)didReceiveMemoryWarning
@@ -178,7 +168,7 @@ typedef enum : NSUInteger {
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark Adding Rows and Columns
+#pragma mark Inserting and Deleting Rows and Columns
 
 - (void)insertRow:(NSMutableArray *)row
             atRow:(NSInteger)rowNum
@@ -239,9 +229,6 @@ typedef enum : NSUInteger {
                                          if (_cells[i][j] != [NSNull null])
                                              ((UIView *)_cells[i][j]).frame = [newFrames[i][j] CGRectValue];
                              }];
-            
-            // Update layout to insert row in view
-//            [self layoutCellsAnimated:animated];
         }
     }
 }
@@ -316,9 +303,6 @@ typedef enum : NSUInteger {
                                              ((UIView *)_cells[i][j]).frame = [newFrames[i][j] CGRectValue];
                              }];
         }
-        
-        // Update layout to insert column in view
-//        [self layoutCellsAnimated:animated];
     }
 }
 
@@ -329,6 +313,46 @@ typedef enum : NSUInteger {
           withWidth:-1
       withAlignment:LVSColAlignmentCenter
            animated:animated];
+}
+
+/* Deletes row, removes cells as subviews, and makes appropriate changes to _cells, 
+    _userRowHeights, _rowHeights, and _rowAlignments. Updates layout. */
+- (void)deleteRow:(NSInteger)rowNum animated:(BOOL)animated
+{
+    // Remove cells as subviews
+    for (UIView *cell in _cells[rowNum])
+        [cell removeFromSuperview];
+    
+    // Remove row from _cells
+    [_cells removeObjectAtIndex:rowNum];
+    
+    // Remove corresponding entries in _userRowHeights, _rowHeights, and _rowAlignments
+    [_userRowHeights removeObjectAtIndex:rowNum];
+    [_rowHeights removeObjectAtIndex:rowNum];
+    [_rowAlignments removeObjectAtIndex:rowNum];
+    
+    // Update layout
+    [self layoutCellsAnimated:animated];
+}
+
+/* Deletes column, removes cells as subviews, and makes appropriate changes to _cells,
+    _userColWidths, _colWidths, and _colAlignments. Updates layout. */
+- (void)deleteCol:(NSInteger)colNum animated:(BOOL)animated
+{
+    // Remove cells as subviews, and delete from _cells
+    for (int i = 0; i < self.numberOfRows; i++)
+    {
+        [_cells[i][colNum] removeFromSuperview];
+        [_cells[i] removeObjectAtIndex:colNum];
+    }
+    
+    // Remove corresponding entries in _userColWidths, _colWidths, and _colAlignments
+    [_userColWidths removeObjectAtIndex:colNum];
+    [_colWidths removeObjectAtIndex:colNum];
+    [_colAlignments removeObjectAtIndex:colNum];
+    
+    // Update layout
+    [self layoutCellsAnimated:animated];    
 }
 
 #pragma mark Getting and Setting Views
@@ -477,8 +501,6 @@ typedef enum : NSUInteger {
     // If state = began, set pinch properties
     if (gesture.state == UIGestureRecognizerStateBegan)
     {
-        NSLog(@"%@ %@", NSStringFromCGPoint([gesture locationOfTouch:0 inView:self.view]), NSStringFromCGPoint([gesture locationOfTouch:1 inView:self.view]));
-        
         // Determine whether pinching rows, columns, or neither
         if ((touchCell0.col == touchCell1.col) && (abs(touchCell0.row - touchCell1.row) == 1))
         {
@@ -561,6 +583,7 @@ typedef enum : NSUInteger {
                 _origSizesOfCellsBeingInserted[j] = [NSValue valueWithCGSize:cell.frame.size];
                 _maxSizeOfCellsBeingInserted = MAX(_maxSizeOfCellsBeingInserted, cell.frame.size.width);
             }
+            NSLog(@"%f", _maxSizeOfCellsBeingInserted);
         }
         else
         {
@@ -574,24 +597,98 @@ typedef enum : NSUInteger {
             _cellsBeingInserted = nil;
         }
         
-        // If pinch is for real, remember original frames and add new cells as subviews
-        if ((_currentPinchType == LVSPinchTypeRow) || (_currentPinchType == LVSPinchTypeCol))
+        // If pinch is for real, insert new cells
+        if (_currentPinchType == LVSPinchTypeRow)
         {
-            // Remember original frames
-            _origFrames = [[NSMutableArray alloc] initWithCapacity:self.numberOfRows];
-            for (int i = 0; i < self.numberOfRows; i++)
-            {
-                _origFrames[i] = [[NSMutableArray alloc] initWithCapacity:self.numberOfCols];
-                for (int j = 0; j < self.numberOfCols; j++)
-                    _origFrames[i][j] = [NSValue valueWithCGRect:((UIView *)_cells[i][j]).frame];
-            }
-            
-            // Add new cells as subviews, with 0 size
+            // Set frames of new cells to 0
             for (UIView *cell in _cellsBeingInserted)
-            {
                 cell.frame = CGRectZero;
-                [self.view addSubview:cell];
-            }
+            
+            // Insert new row
+            [self insertRow:[_cellsBeingInserted mutableCopy]
+                      atRow:_pinchRowCol1
+                 withHeight:-1
+              withAlignment:LVSRowAlignmentMiddle
+                   animated:NO];
+        }
+        else if (_currentPinchType == LVSPinchTypeCol)
+        {
+            // Set frames of new cells to 0
+            for (UIView *cell in _cellsBeingInserted)
+                cell.frame = CGRectZero;
+            
+            // Insert new column
+            [self insertCol:[_cellsBeingInserted mutableCopy]
+                      atCol:_pinchRowCol1
+                  withWidth:-1
+              withAlignment:LVSColAlignmentCenter
+                   animated:NO];
+        }
+    }
+
+    // Variables for keeping track of pinch locations
+    CGPoint topPinchLoc;
+    CGPoint botPinchLoc;
+    CGPoint leftPinchLoc;
+    CGPoint rghtPinchLoc;
+    CGFloat offsetUp = 0.0; // not really necessary to initialize these but
+    CGFloat offsetDn = 0.0; // silences warnings about using variables before initializing
+    CGFloat offsetLt = 0.0;
+    CGFloat offsetRt = 0.0;
+    
+    // What kind of pinch?
+    if (_currentPinchType == LVSPinchTypeRow)
+    {
+        // Determine top and bottom pinch locations
+        if (touchLoc0.y < touchLoc1.y)
+        {
+            topPinchLoc = touchLoc0;
+            botPinchLoc = touchLoc1;
+        }
+        else
+        {
+            topPinchLoc = touchLoc1;
+            botPinchLoc = touchLoc0;
+        }
+        
+        // Calculate up and down offsets
+        offsetUp = MIN(0.0, topPinchLoc.y - _startPinchLoc0.y);
+        offsetDn = MAX(0.0, botPinchLoc.y - _startPinchLoc1.y);
+        
+        // If total offset > new row height (plus margin, plus a bit more),
+        // reduce offsets
+        CGFloat maxTotalOffset = 1.1 * (_maxSizeOfCellsBeingInserted + self.rowMargin);
+        if (offsetDn - offsetUp > maxTotalOffset) // NB: offsetUp <= 0
+        {
+            offsetUp *= maxTotalOffset / (offsetDn - offsetUp);
+            offsetDn *= maxTotalOffset / (offsetDn - offsetUp);
+        }
+    }
+    else if (_currentPinchType == LVSPinchTypeCol)
+    {
+        // Determine left and right pinch locations
+        if (touchCell0.col < touchCell1.col)
+        {
+            leftPinchLoc = [gesture locationOfTouch:0 inView:self.view];
+            rghtPinchLoc = [gesture locationOfTouch:1 inView:self.view];
+        }
+        else
+        {
+            leftPinchLoc = [gesture locationOfTouch:1 inView:self.view];
+            rghtPinchLoc = [gesture locationOfTouch:0 inView:self.view];
+        }
+        
+        // Calculate left and right offsets
+        offsetLt = MIN(0.0, leftPinchLoc.x - _startPinchLoc0.x);
+        offsetRt = MAX(0.0, rghtPinchLoc.x - _startPinchLoc1.x);
+        
+        // If total offset > new col width (plus margin, plus a bit more),
+        // reduce offsets
+        CGFloat maxTotalOffset = 1.1 * (_maxSizeOfCellsBeingInserted + self.colMargin);
+        if (offsetRt - offsetLt > maxTotalOffset) // NB: offsetLt <= 0
+        {
+            offsetLt *= maxTotalOffset / (offsetRt - offsetLt);
+            offsetDn *= maxTotalOffset / (offsetRt - offsetLt);
         }
     }
     
@@ -601,117 +698,104 @@ typedef enum : NSUInteger {
         // What kind of pinch?
         if (_currentPinchType == LVSPinchTypeRow)
         {
-            // Determine top and bottom pinch locations
-            CGPoint topPinchLoc;
-            CGPoint botPinchLoc;
-            if (touchLoc0.y < touchLoc1.y)
-            {
-                topPinchLoc = touchLoc0;
-                botPinchLoc = touchLoc1;
-            }
-            else
-            {
-                topPinchLoc = touchLoc1;
-                botPinchLoc = touchLoc0;
-            }
-            
-            // Calculate up and down offsets
-            CGFloat offsetUp = MIN(0.0, topPinchLoc.y - _startPinchLoc0.y);
-            CGFloat offsetDn = MAX(0.0, botPinchLoc.y - _startPinchLoc1.y);
-            
-            // If total offset > new row height (plus margin, plus a bit more),
-            // reduce offsets
-            CGFloat maxTotalOffset = 1.1 * (_maxSizeOfCellsBeingInserted + self.rowMargin);
-            if (offsetDn - offsetUp > maxTotalOffset) // NB: offsetUp <= 0
-            {
-                offsetUp *= maxTotalOffset / (offsetDn - offsetUp);
-                offsetDn *= maxTotalOffset / (offsetDn - offsetUp);
-            }
-
-            // Move rows, and record bottom edge of _pinchRowCol0 and top edge of _pinchRowCol1
-            CGFloat bottomEdge = 0.0;
-            CGFloat topEdge = INFINITY;
-            for (int i = 0; i < self.numberOfRows; i++)
-                for (int j = 0; j < self.numberOfCols; j++)
-                {
-                    UIView *view = _cells[i][j];
-                    CGRect origFrame = [_origFrames[i][j] CGRectValue];
-                    
-                    // Move cell
-                    if (i <= _pinchRowCol0)
-                        view.frame = CGRectOffset(origFrame, 0, offsetUp);
-                    else
-                        view.frame = CGRectOffset(origFrame, 0, offsetDn);
-                    [view setNeedsDisplay];
-                    
-                    // If this is a pinch row, update edge
-                    if (i == _pinchRowCol0)
-                        bottomEdge = MAX(bottomEdge, CGRectGetMaxY(view.frame));
-                    else if (i == _pinchRowCol1)
-                        topEdge = MIN(topEdge, CGRectGetMinY(view.frame));
-                }
-            
-            // Set frames of cells being inserted
-            CGFloat xPos = CGRectGetMinX(self.view.bounds) + self.colMargin;
+            // Set sizes of new cells -- zero if pinch is not tall enough
             for (int j = 0; j < self.numberOfCols; j++)
             {
-                // TODO: handle vertical/horizontal alignment
-                
                 UIView *cell = _cellsBeingInserted[j];
-                CGFloat y = bottomEdge + self.rowMargin;
-                CGFloat height = MAX(0.0, topEdge - self.rowMargin - y);
+                CGFloat height = MAX(0.0, offsetDn - offsetUp - self.rowMargin);
                 CGFloat width = [_origSizesOfCellsBeingInserted[j] CGSizeValue].width *
                     (height / [_origSizesOfCellsBeingInserted[j] CGSizeValue].height);
-                CGFloat x = xPos + ([_colWidths[j] floatValue] - width) / 2.0;
-                cell.frame = CGRectMake(x, y, width, height);
-                
-                // Update xPos
-                xPos += [_colWidths[j] floatValue] + self.colMargin;
+                cell.frame = CGRectMake(0.0, 0.0, width, height);
             }
-
+            
+            // Build array of offsets
+            NSMutableArray *rowOffsets = [[NSMutableArray alloc] initWithCapacity:self.numberOfRows];
+            for (int i = 0; i < self.numberOfRows; i++)
+                if (i <= _pinchRowCol0)
+                    rowOffsets[i] = [NSNumber numberWithFloat:offsetUp];
+                else if (i == _pinchRowCol1) // now points to new row
+                    rowOffsets[i] = [NSNumber numberWithFloat:0.0];
+                else
+                    rowOffsets[i] = [NSNumber numberWithFloat:offsetDn];
+            
+            // Update layout
+            NSMutableArray *newFrames = [self calcFramesWithRowOffsets:rowOffsets withColOffsets:nil];
+            [self setFramesTo:newFrames];
         }
         else if (_currentPinchType == LVSPinchTypeCol)
         {
-            // Determine left and right pinch locations
-            CGPoint leftPinchLoc;
-            CGPoint rghtPinchLoc;
-            if (touchCell0.col < touchCell1.col)
+            // Set sizes of new cells -- zero if pinch is not wide enough
+            for (int i = 0; i < self.numberOfRows; i++)
             {
-                leftPinchLoc = [gesture locationOfTouch:0 inView:self.view];
-                rghtPinchLoc = [gesture locationOfTouch:1 inView:self.view];
-            }
-            else
-            {
-                leftPinchLoc = [gesture locationOfTouch:1 inView:self.view];
-                rghtPinchLoc = [gesture locationOfTouch:0 inView:self.view];
+                UIView *cell = _cellsBeingInserted[i];
+                CGFloat width = MAX(0.0, offsetRt - offsetUp - self.colMargin);
+                CGFloat height = [_origSizesOfCellsBeingInserted[i] CGSizeValue].height *
+                    (width / [_origSizesOfCellsBeingInserted[i] CGSizeValue].width);
+                cell.frame = CGRectMake(0.0, 0.0, width, height);
             }
             
-            // Move cols
-            for (int i = 0; i < self.numberOfRows; i++)
-                for (int j = 0; j < self.numberOfCols; j++)
-                {
-                    UIView *view = _cells[i][j];
-                    CGRect origFrame = [_origFrames[i][j] CGRectValue];
-                    
-                    // Determine offset (ensure >= 0, <= a bit larger than new col width)
-                    CGFloat offset;
-                    if (j <= _pinchRowCol0)
-                        offset = leftPinchLoc.x - _startPinchLoc0.x;
-                    else
-                        offset = rghtPinchLoc.x - _startPinchLoc1.y;
-                    offset = MIN(MAX(0.0, offset), 1.1 * _maxSizeOfCellsBeingInserted);
-                    
-                    // Move cell
-                    view.frame = CGRectOffset(origFrame, offset, 0);
-                }
+            // Build array of offsets
+            NSMutableArray *colOffsets = [[NSMutableArray alloc] initWithCapacity:self.numberOfCols];
+            for (int j = 0; j < self.numberOfCols; j++)
+                if (j <= _pinchRowCol0)
+                    colOffsets[j] = [NSNumber numberWithFloat:offsetLt];
+                else if (j == _pinchRowCol1) // now points to new col
+                    colOffsets[j] = [NSNumber numberWithFloat:0.0];
+                else
+                    colOffsets[j] = [NSNumber numberWithFloat:offsetRt];
+            
+            // Update layout
+            NSMutableArray *newFrames = [self calcFramesWithRowOffsets:nil withColOffsets:colOffsets];
+            [self setFramesTo:newFrames];
         }
     }
-    else if ((gesture.state == UIGestureRecognizerStateCancelled) ||
-             (gesture.state == UIGestureRecognizerStateEnded) ||
-             (gesture.state == UIGestureRecognizerStateFailed))
+    
+    // If state = ended, cancelled, or failed, free arrays and reset pinch properties,
+    // and -- unless pinch ended large enough -- deletes row/column being added
+    if ((gesture.state == UIGestureRecognizerStateCancelled) ||
+        (gesture.state == UIGestureRecognizerStateEnded) ||
+        (gesture.state == UIGestureRecognizerStateFailed))
     {
+        // Delete new row/col?
+        BOOL deleteNew = YES;
+        if ( (gesture.state == UIGestureRecognizerStateEnded) &&
+             (((_currentPinchType == LVSPinchTypeRow) && (offsetDn - offsetUp > _maxSizeOfCellsBeingInserted)) ||
+             ((_currentPinchType == LVSPinchTypeCol) && (offsetRt - offsetLt > _maxSizeOfCellsBeingInserted))) )
+            deleteNew = NO;
+
+        // Do deletion, or do final layout
+        if (deleteNew)
+        {
+            // Delete row/col
+            [UIView animateWithDuration:0.5
+                                  delay:0.0
+                 usingSpringWithDamping:0.4
+                  initialSpringVelocity:1.0
+                                options:0
+                             animations:^{
+                                 if (_currentPinchType == LVSPinchTypeRow)
+                                     [self deleteRow:_pinchRowCol1 animated:NO];
+                                 else
+                                     [self deleteCol:_pinchRowCol1 animated:NO];
+                             }
+                             completion:nil];
+        }
+        else
+            // Do final layout
+            [UIView animateWithDuration:0.5
+                                  delay:0.0
+                 usingSpringWithDamping:0.4
+                  initialSpringVelocity:1.0
+                                options:0
+                             animations:^{
+                                 [self layoutCellsAnimated:YES];
+                             }
+                             completion:nil];
+        
+        // Reset _currentPinchType and free arrays for cells being inserted
         _currentPinchType = LVSPinchTypeNone;
         _cellsBeingInserted = nil;
+        _origSizesOfCellsBeingInserted = nil;
     }
     
     
@@ -726,6 +810,7 @@ typedef enum : NSUInteger {
  Calling calcFrames and then calling setFramesTo using the frames returned
  is the same as calling layoutCells:animated(=NO). But separating the two allows
  something to be done in between, e.g., set temporary frames at start of animation.
+ Calls setNeedsDisplay for all cells.
  */
 - (void)setFramesTo:(NSMutableArray *)frames
 {
@@ -733,10 +818,13 @@ typedef enum : NSUInteger {
         for (int j = 0; j < self.numberOfCols; j++)
             if (frames[i][j] != [NSNull null]) // TODO: USE TRY BLOCK
                 if (_cells[i][j] != [NSNull null])
+                {
                     ((UIView *)_cells[i][j]).frame = [frames[i][j] CGRectValue];
+                    [(UIView *)_cells[i][j] setNeedsDisplay];
+                }
 }
 
-/* 
+/*
  Returns 2D array of frames corresponding to matrix cells after layout. Entries in
  the array are of type NSValue; use rect = [array[i][j] CGRectValue] to recover.
  Sets row heights and column widths first.
@@ -746,7 +834,7 @@ typedef enum : NSUInteger {
  nominal locations. Set to nil for no offset.
  
  Calling calcFrames with no offsets and then calling setFramesTo using the frames returned
- is the same as calling layoutFrames:animated(=NO).
+ is the same as calling layoutCellsAnimated(=NO).
  */
 - (NSMutableArray *)calcFramesWithRowOffsets:(NSArray *)rowOffsets withColOffsets:(NSArray *)colOffsets
 {
@@ -801,11 +889,10 @@ typedef enum : NSUInteger {
         for (int i = 0; i < self.numberOfRows; i++)
             for (int j = 0; j < self.numberOfCols; j++)
             {
-                UIView *cell = _cells[i][j];
                 if (rowOffsets)
-                    cell.frame = CGRectOffset(cell.frame, 0.0, [rowOffsets[i] floatValue]);
+                    frames[i][j] = [NSValue valueWithCGRect:CGRectOffset([frames[i][j] CGRectValue], 0.0, [rowOffsets[i] floatValue])];
                 if (colOffsets)
-                    cell.frame = CGRectOffset(cell.frame, [colOffsets[j] floatValue], 0.0);
+                    frames[i][j] = [NSValue valueWithCGRect:CGRectOffset([frames[i][j] CGRectValue], [colOffsets[j] floatValue], 0.0)];
             }
     }
     
